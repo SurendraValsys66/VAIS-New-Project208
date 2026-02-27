@@ -143,10 +143,23 @@ export default function ChatSupport() {
   const [messages, setMessages] = useState<ChatMessage[]>(sampleChatMessages);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [ticketStatus, setTicketStatus] = useState<"open" | "in-progress" | "resolved" | "closed">("open");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Find the ticket based on ID
-  const ticket = sampleTickets.find((t) => t.id === ticketId);
+  let ticket = sampleTickets.find((t) => t.id === ticketId);
+
+  // Initialize ticketStatus with the ticket's current status
+  useEffect(() => {
+    if (ticket) {
+      setTicketStatus(ticket.status);
+    }
+  }, [ticketId]);
+
+  // Apply the local state status to the ticket
+  if (ticket) {
+    ticket = { ...ticket, status: ticketStatus };
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -256,6 +269,18 @@ export default function ChatSupport() {
       minute: "2-digit",
       hour12: true,
     }).format(date);
+  };
+
+  const handleMarkAsResolved = () => {
+    setTicketStatus("closed");
+    // Add system message to chat
+    const systemMessage: ChatMessage = {
+      id: (Date.now() + 2).toString(),
+      sender: "system",
+      message: "Ticket has been marked as resolved and closed.",
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, systemMessage]);
   };
 
   return (
@@ -429,6 +454,31 @@ export default function ChatSupport() {
                     </div>
                   </div>
                 )}
+
+                <hr className="border-gray-200" />
+
+                <Button
+                  onClick={handleMarkAsResolved}
+                  disabled={ticket.status === "closed"}
+                  className={cn(
+                    "w-full font-semibold transition-all duration-200",
+                    ticket.status === "closed"
+                      ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 text-white"
+                  )}
+                >
+                  {ticket.status === "closed" ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Resolved
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Mark as Resolved
+                    </>
+                  )}
+                </Button>
               </CardContent>
             </Card>
           </div>
