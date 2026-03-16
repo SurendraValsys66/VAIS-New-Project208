@@ -14,12 +14,14 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Layers, Plus, Trash2, Edit2, Layout, Calendar, Clock, Search } from "lucide-react";
+import { Layers, Plus, Trash2, Edit2, Layout, Calendar, Clock, Search, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { PREDEFINED_TEMPLATES } from "@/components/predefine-email-templates";
+import { OnlineMarketingConferenceTemplate } from "@/components/predefine-email-templates";
 
-type View = "list" | "editor";
+type View = "list" | "editor" | "template-preview" | "template-list";
 
 interface PageData {
   id: string;
@@ -31,28 +33,167 @@ interface PageData {
 export default function LandingPages() {
   const [view, setView] = useState<View>("list");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [templateInEditor, setTemplateInEditor] = useState<string | null>(null);
   const [pages, setPages] = useState<PageData[]>([
     { id: "1", name: "Modern Hero Page", updatedAt: "2024-03-20T10:00:00Z" },
     { id: "2", name: "SaaS Product Landing", updatedAt: "2024-03-19T15:30:00Z" },
   ]);
 
   const handleCreateNew = () => {
+    setTemplateInEditor(null);
     setView("editor");
   };
 
   const handleEdit = (id: string) => {
+    setTemplateInEditor(null);
+    setView("editor");
+  };
+
+  const handleViewTemplates = () => {
+    setView("template-list");
+  };
+
+  const handleSelectTemplate = (templateId: string) => {
+    setSelectedTemplate(templateId);
+    setView("template-preview");
+  };
+
+  const handleUseTemplate = (templateId: string) => {
+    // Set the template to be loaded in the editor
+    setTemplateInEditor(templateId);
     setView("editor");
   };
 
   const handleBack = () => {
     setView("list");
+    setSelectedTemplate(null);
+    setTemplateInEditor(null);
   };
 
   if (view === "editor") {
     return (
       <DndProvider backend={HTML5Backend}>
-        <BuilderCanvas onBack={handleBack} />
+        <BuilderCanvas onBack={handleBack} templateId={templateInEditor || undefined} />
       </DndProvider>
+    );
+  }
+
+  if (view === "template-list") {
+    return (
+      <DashboardLayout>
+        <div className="space-y-8">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+                <div className="w-10 h-10 bg-valasys-orange rounded-xl flex items-center justify-center text-white shadow-lg">
+                  <Zap className="w-6 h-6" />
+                </div>
+                Predefined Templates
+              </h1>
+              <p className="text-gray-500 mt-1">Choose from professionally designed email and landing page templates.</p>
+            </div>
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="rounded-2xl px-6 py-6"
+            >
+              Back to Pages
+            </Button>
+          </div>
+
+          {/* Templates Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {PREDEFINED_TEMPLATES.map((template) => (
+              <div
+                key={template.id}
+                className="group bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-b-4 border-b-transparent hover:border-b-valasys-orange cursor-pointer"
+                onClick={() => handleSelectTemplate(template.id)}
+              >
+                {/* Preview */}
+                <div className="h-48 bg-gradient-to-br from-teal-400 to-orange-200 relative overflow-hidden flex items-center justify-center p-8">
+                  <div className="text-center text-white">
+                    <Zap className="w-12 h-12 mx-auto mb-3 opacity-80" />
+                    <p className="text-sm font-semibold opacity-90">{template.category}</p>
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none" />
+                </div>
+
+                {/* Info */}
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-valasys-orange transition-colors">
+                      {template.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">{template.description}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-auto">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectTemplate(template.id);
+                      }}
+                      className="flex-1 bg-valasys-orange hover:bg-valasys-orange/90 text-white rounded-xl py-5 font-bold shadow-lg shadow-valasys-orange/10"
+                    >
+                      Preview
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (view === "template-preview") {
+    const template = PREDEFINED_TEMPLATES.find((t) => t.id === selectedTemplate);
+
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                {template?.name}
+              </h1>
+              <p className="text-gray-500 mt-1">{template?.description}</p>
+            </div>
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="rounded-2xl px-6 py-6"
+            >
+              Back
+            </Button>
+          </div>
+
+          {/* Template Preview */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+            {selectedTemplate === "online-marketing-conference" && (
+              <OnlineMarketingConferenceTemplate
+                isPreview={true}
+                onUseTemplate={() => handleUseTemplate(selectedTemplate!)}
+              />
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 justify-center py-8">
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="px-8 py-6 rounded-xl font-bold"
+            >
+              View More Templates
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
     );
   }
 
@@ -70,13 +211,23 @@ export default function LandingPages() {
             </h1>
             <p className="text-gray-500 mt-1">Design, build and publish high-converting pages in minutes.</p>
           </div>
-          <Button
-            onClick={handleCreateNew}
-            className="bg-valasys-orange hover:bg-valasys-orange/90 text-white px-6 py-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all font-bold text-base group"
-          >
-            <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            Create New Page
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleViewTemplates}
+              variant="outline"
+              className="px-6 py-6 rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-base group border-2 border-valasys-orange text-valasys-orange hover:bg-valasys-orange/5"
+            >
+              <Zap className="w-5 h-5 mr-2" />
+              View Templates
+            </Button>
+            <Button
+              onClick={handleCreateNew}
+              className="bg-valasys-orange hover:bg-valasys-orange/90 text-white px-6 py-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all font-bold text-base group"
+            >
+              <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              Create New Page
+            </Button>
+          </div>
         </div>
 
         {/* Stats & Search */}

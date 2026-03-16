@@ -117,7 +117,9 @@ export default function BuildMyCampaign() {
 
               {activeTab === "form" && (
                 <div className="p-6 mt-0">
-                  <CampaignRequestForm />
+                  <CampaignRequestForm
+                    onCampaignAccepted={() => setActiveTab("list")}
+                  />
                 </div>
               )}
 

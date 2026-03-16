@@ -413,6 +413,7 @@ interface DeliverablesDialogProps {
   userHasFullPermission?: boolean;
   isFormValid?: boolean;
   selectedAssets?: SelectedAsset[];
+  onCampaignAccepted?: () => void;
 }
 
 type CampaignStatus = "pending" | "accepted" | "declined";
@@ -428,6 +429,7 @@ function DeliverablesDialog({
   userHasFullPermission = true,
   isFormValid = true,
   selectedAssets = [],
+  onCampaignAccepted,
 }: DeliverablesDialogProps) {
   const [open, setOpen] = useState(false);
   const [campaignStatus, setCampaignStatus] =
@@ -1078,15 +1080,51 @@ function DeliverablesDialog({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium text-blue-900">Thank you!</p>
-                <p className="text-sm text-blue-700 mt-1">
-                  Our team will contact you shortly.
-                </p>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Please review the campaign details before accepting:
+            </p>
+
+            <div className="space-y-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Quarterly Volume</p>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    Projected deliverables based on your targeting criteria
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Database Reach</p>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    Total contacts available matching your audience selection
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Campaign Assets</p>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    Your email templates and landing pages are ready
+                  </p>
+                </div>
               </div>
             </div>
+
+            <p className="text-xs text-gray-500 leading-relaxed">
+              By accepting, you agree to proceed with this campaign. You can track progress and manage campaign requests in the Campaign Requests tab.
+            </p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -1103,10 +1141,11 @@ function DeliverablesDialog({
                 setCampaignStatus("accepted");
                 setShowConfirmation(false);
                 setOpen(false);
+                onCampaignAccepted?.();
               }}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
-              Confirm
+              Confirm Acceptance
             </Button>
           </div>
         </DialogContent>
@@ -1115,7 +1154,11 @@ function DeliverablesDialog({
   );
 }
 
-export default function CampaignRequestForm() {
+interface CampaignRequestFormProps {
+  onCampaignAccepted?: () => void;
+}
+
+export default function CampaignRequestForm({ onCampaignAccepted }: CampaignRequestFormProps) {
   const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectedAssets, setSelectedAssets] = useState<SelectedAsset[]>([]);
@@ -1456,6 +1499,7 @@ export default function CampaignRequestForm() {
                       employeeSize={form.watch("employeeSize")}
                       isFormValid={isFormValid()}
                       selectedAssets={selectedAssets}
+                      onCampaignAccepted={onCampaignAccepted}
                     />
                   ) : (
                     // TAL FILE MODE - Show Submit Button or Countdown
