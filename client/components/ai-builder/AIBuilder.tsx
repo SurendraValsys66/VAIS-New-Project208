@@ -285,58 +285,41 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
   if (chatMessages.length > 0) {
     return (
       <DashboardLayout>
-        <div className="flex h-screen overflow-hidden">
-          {/* Left Sidebar - Can be toggled */}
-          {showSidebar && <AIBuilderSidebar />}
-
-          {/* Main Chat Content */}
-          <div className="flex-1 flex flex-col bg-white">
+        <div className="flex h-screen overflow-hidden bg-white">
+          {/* Left Chat Sidebar */}
+          <div className="w-96 border-r border-gray-200 flex flex-col bg-white">
             {/* Header */}
-            <div className="border-b border-gray-200 bg-white px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {!showSidebar && (
-                  <Button
-                    onClick={() => setShowSidebar(true)}
-                    variant="ghost"
-                    size="icon"
-                    className="text-gray-600 hover:bg-gray-100"
-                  >
-                    <Menu className="w-5 h-5" />
-                  </Button>
-                )}
-                <h2 className="text-lg font-bold text-gray-900">AI Builder</h2>
-              </div>
-              {showSidebar && (
-                <Button
-                  onClick={() => setShowSidebar(false)}
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:bg-gray-100"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              )}
+            <div className="border-b border-gray-200 bg-white px-4 py-3 flex items-center justify-between">
+              <h2 className="text-base font-bold text-gray-900">AI Builder Chat</h2>
+              <Button
+                onClick={onBack}
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-gray-100"
+              >
+                <X className="w-5 h-5" />
+              </Button>
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               {chatMessages.map((message) => (
                 <div
                   key={message.id}
                   className={cn(
-                    "flex gap-4",
+                    "flex gap-2",
                     message.type === "user" ? "justify-end" : "justify-start"
                   )}
                 >
                   {message.type === "assistant" && (
-                    <div className="flex-shrink-0 w-8 h-8 bg-valasys-orange rounded-full flex items-center justify-center text-white">
-                      <Sparkles className="w-4 h-4" />
+                    <div className="flex-shrink-0 w-6 h-6 bg-valasys-orange rounded-full flex items-center justify-center text-white">
+                      <Sparkles className="w-3 h-3" />
                     </div>
                   )}
 
                   <div
                     className={cn(
-                      "max-w-2xl rounded-lg p-4",
+                      "max-w-xs rounded-lg p-3 text-sm",
                       message.type === "user"
                         ? "bg-valasys-orange text-white rounded-br-none"
                         : "bg-gray-100 text-gray-900 rounded-bl-none"
@@ -344,45 +327,45 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
                   >
                     {message.isThinking ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Thinking</span>
-                        <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce" />
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.4s" }} />
+                        <span className="text-xs font-medium">Thinking</span>
+                        <div className="flex gap-0.5">
+                          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
+                          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.4s" }} />
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                        {message.content && <p className="text-sm">{message.content}</p>}
+                      <div className="space-y-2">
+                        {message.content && <p className="text-xs">{message.content}</p>}
 
                         {/* Builder Sections */}
                         {message.builderSections && message.builderSections.length > 0 && (
-                          <div className="space-y-3 mt-4">
+                          <div className="space-y-2 mt-2">
                             {message.builderSections.map((section) => (
                               <div
                                 key={section.id}
-                                className="border border-gray-300 rounded-lg overflow-hidden bg-white"
+                                className="border border-gray-300 rounded-md overflow-hidden bg-white"
                               >
                                 <button
                                   onClick={() => toggleSection(section.id)}
-                                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                                  className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 transition-colors"
                                 >
-                                  <div className="flex items-center gap-3 text-left">
+                                  <div className="flex items-center gap-2 text-left">
                                     <div className="flex-shrink-0">
                                       {expandedSections.has(section.id) ? (
-                                        <CheckCircle className="w-5 h-5 text-green-500" />
+                                        <CheckCircle className="w-4 h-4 text-green-500" />
                                       ) : (
-                                        <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                                        <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
                                       )}
                                     </div>
                                     <div>
-                                      <h4 className="font-semibold text-gray-900 text-sm">{section.title}</h4>
-                                      <p className="text-xs text-gray-600 mt-1">{section.description}</p>
+                                      <h4 className="font-semibold text-gray-900 text-xs">{section.title}</h4>
+                                      <p className="text-xs text-gray-600">{section.description}</p>
                                     </div>
                                   </div>
                                   <ChevronDown
                                     className={cn(
-                                      "w-5 h-5 text-gray-400 transition-transform flex-shrink-0",
+                                      "w-4 h-4 text-gray-400 transition-transform flex-shrink-0",
                                       expandedSections.has(section.id) && "transform rotate-180"
                                     )}
                                   />
@@ -390,10 +373,10 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
 
                                 {/* Expanded Content */}
                                 {expandedSections.has(section.id) && (
-                                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-300 space-y-2">
+                                  <div className="px-3 py-2 bg-gray-50 border-t border-gray-300 space-y-1">
                                     {section.items.map((item, index) => (
-                                      <div key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                                        <div className="w-1.5 h-1.5 bg-valasys-orange rounded-full" />
+                                      <div key={index} className="flex items-center gap-1.5 text-xs text-gray-700">
+                                        <div className="w-1 h-1 bg-valasys-orange rounded-full" />
                                         {item}
                                       </div>
                                     ))}
@@ -412,50 +395,62 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
             </div>
 
             {/* Input Section */}
-            <div className="border-t border-gray-200 bg-white px-6 py-4">
-              <div className="max-w-4xl mx-auto">
-                <div className="relative">
-                  <Textarea
-                    placeholder="Ask for more refinements or continue with a new prompt..."
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+            <div className="border-t border-gray-200 bg-white px-4 py-3">
+              <div className="relative">
+                <Textarea
+                  placeholder="Ask for refinements..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  disabled={isGenerating}
+                  rows={2}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-xs resize-none pr-28"
+                />
+                <div className="absolute bottom-2 right-2 flex gap-1 items-center">
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
                     disabled={isGenerating}
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base resize-none pr-40"
-                  />
-                  <div className="absolute bottom-3 right-3 flex gap-2 items-center">
-                    <select
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
-                      disabled={isGenerating}
-                      className="px-3 py-1 rounded-md bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-valasys-orange cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {AI_MODELS.map((model) => (
-                        <option key={model} value={model}>
-                          {model}
-                        </option>
-                      ))}
-                    </select>
-                    <Button
-                      onClick={handleGenerateLayout}
-                      disabled={isGenerating || !prompt.trim()}
-                      size="icon"
-                      className={cn(
-                        "w-8 h-8 rounded-md transition-all",
-                        isGenerating || !prompt.trim()
-                          ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                          : "bg-valasys-orange hover:bg-valasys-orange/90 text-white"
-                      )}
-                      title="Send"
-                    >
-                      {isGenerating ? (
-                        <Loader className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Send className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </div>
+                    className="px-2 py-1 rounded-md bg-white text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-valasys-orange cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {AI_MODELS.map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    onClick={handleGenerateLayout}
+                    disabled={isGenerating || !prompt.trim()}
+                    size="icon"
+                    className={cn(
+                      "w-6 h-6 rounded-md transition-all",
+                      isGenerating || !prompt.trim()
+                        ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                        : "bg-valasys-orange hover:bg-valasys-orange/90 text-white"
+                    )}
+                    title="Send"
+                  >
+                    {isGenerating ? (
+                      <Loader className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Send className="w-3 h-3" />
+                    )}
+                  </Button>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Loader Section */}
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="flex flex-col items-center gap-6">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-gray-200"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-valasys-orange border-r-valasys-orange animate-spin"></div>
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-gray-900">Building your design</h3>
+                <p className="text-sm text-gray-600 mt-1">Generating your landing page...</p>
               </div>
             </div>
           </div>
