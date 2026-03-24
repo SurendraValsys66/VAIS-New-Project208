@@ -15,41 +15,7 @@ interface BuilderCanvasProps {
   initialLayout?: BuilderComponent[];
 }
 
-const DEFAULT_LAYOUT: BuilderComponent[] = [
-  {
-    id: "root-hero-1",
-    type: "hero",
-    props: {},
-    height: 600,
-  },
-  {
-    id: "root-logo-cloud-1",
-    type: "logo-cloud",
-    props: {},
-  },
-  {
-    id: "root-section-1",
-    type: "section",
-    props: {},
-    children: [
-      {
-        id: "root-row-1",
-        type: "row",
-        props: {},
-        children: [
-          {
-            id: "root-col-1",
-            type: "column",
-            width: 12,
-            children: [
-              { id: "root-feature-grid-1", type: "feature-grid", props: {} },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+const DEFAULT_LAYOUT: BuilderComponent[] = [];
 
 export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId, initialLayout }) => {
   const [isPreviewMode, setIsPreviewMode] = React.useState(false);
