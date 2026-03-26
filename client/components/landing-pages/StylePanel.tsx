@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, Palette, Type, Box, Sparkles, ToggleLeft, AlignLeft, AlignCenter, AlignRight, AlignJustify, Settings } from "lucide-react";
+import { ChevronDown, Palette, Type, Box, Sparkles, ToggleLeft, AlignLeft, AlignCenter, AlignRight, AlignJustify, Settings, Monitor, Smartphone, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StylePanelProps {
@@ -854,35 +854,76 @@ export const StylePanel: React.FC<StylePanelProps> = ({ onClose }) => {
               <p className="text-xs text-gray-600 mb-3">Display or hide content based on the type of device or other specific conditions</p>
 
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-2">Show on:</label>
-                <div className="space-y-2">
+                <label className="text-xs font-semibold text-gray-600 block mb-3">Show on:</label>
+                <div className="flex flex-wrap gap-2">
                   {[
-                    { value: "all", label: "All devices" },
-                    { value: "desktop", label: "Only on desktop" },
-                    { value: "mobile", label: "Only on mobile" },
-                  ].map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 text-xs">
-                      <input
-                        type="radio"
-                        name="visibility"
-                        value={opt.value}
-                        checked={styles.contentVisibility === opt.value}
-                        onChange={(e) => updateStyle("contentVisibility", e.target.value)}
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
+                    { value: "all", label: "All devices", icon: null },
+                    { value: "desktop", label: "Only on desktop", icon: Monitor },
+                    { value: "mobile", label: "Only on mobile", icon: Smartphone },
+                  ].map((opt) => {
+                    const IconComponent = opt.icon;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => updateStyle("contentVisibility", opt.value)}
+                        className={cn(
+                          "px-3 py-2 rounded-full border text-xs font-medium flex items-center gap-1.5 transition-colors",
+                          styles.contentVisibility === opt.value
+                            ? "bg-blue-100 border-blue-400 text-blue-700"
+                            : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                        )}
+                      >
+                        {IconComponent && <IconComponent className="w-3.5 h-3.5" />}
+                        {opt.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Display Conditions */}
-              <div className="border-t pt-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-center justify-between mb-3">
                   <label className="text-xs font-semibold text-gray-600">Display conditions</label>
-                  <Button variant="ghost" size="sm" className="text-xs h-6">
+                  <button
+                    onClick={() => {
+                      updateStyle("displayConditions", [...styles.displayConditions, ""]);
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                  >
                     + Add condition
-                  </Button>
+                  </button>
                 </div>
+
+                {/* Display Conditions List */}
+                {styles.displayConditions.length > 0 && (
+                  <div className="space-y-2">
+                    {styles.displayConditions.map((condition, idx) => (
+                      <div key={idx} className="flex gap-2 items-start bg-white p-2.5 rounded border border-gray-200">
+                        <Input
+                          type="text"
+                          value={condition}
+                          onChange={(e) => {
+                            const newConditions = [...styles.displayConditions];
+                            newConditions[idx] = e.target.value;
+                            updateStyle("displayConditions", newConditions);
+                          }}
+                          placeholder="Add condition..."
+                          className="flex-1 text-xs"
+                        />
+                        <button
+                          onClick={() => {
+                            const newConditions = styles.displayConditions.filter((_, i) => i !== idx);
+                            updateStyle("displayConditions", newConditions);
+                          }}
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

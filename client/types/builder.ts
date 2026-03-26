@@ -56,6 +56,9 @@ export interface BuilderComponent {
   widthUnit?: "%" | "px";
   heightUnit?: "px";
   fontSizeUnit?: "px" | "%";
+  // Content visibility properties
+  contentVisibility?: "all" | "desktop" | "mobile";
+  displayConditions?: string[];
 }
 
 export const DRAG_TYPES = {

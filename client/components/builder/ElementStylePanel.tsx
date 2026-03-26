@@ -2,7 +2,7 @@ import React from "react";
 import { BuilderComponent } from "@/types/builder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, AlignLeft, AlignCenter, AlignRight, AlignJustify } from "lucide-react";
+import { ChevronDown, X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, AlignLeft, AlignCenter, AlignRight, AlignJustify, Monitor, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ElementStylePanelProps {
@@ -36,6 +36,8 @@ interface StyleState {
   backgroundRepeat: "repeat" | "no-repeat" | "repeat-x" | "repeat-y";
   backgroundAttachment: "scroll" | "fixed";
   backgroundOpacity: string;
+  contentVisibility: "all" | "desktop" | "mobile";
+  displayConditions: string[];
 }
 
 interface SpacingState {
@@ -84,6 +86,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     backgroundRepeat: "no-repeat",
     backgroundAttachment: "scroll",
     backgroundOpacity: "100",
+    contentVisibility: "all",
+    displayConditions: [],
   });
 
   const [spacing, setSpacing] = React.useState<SpacingState>({
@@ -109,6 +113,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     sizing: true,
     spacing: true,
     borders: true,
+    contentVisibility: true,
   });
 
   const [groupPaddingValues, setGroupPaddingValues] = React.useState(false);
@@ -166,6 +171,8 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         backgroundRepeat: component.backgroundRepeat || props.backgroundRepeat || "no-repeat",
         backgroundAttachment: component.backgroundAttachment || props.backgroundAttachment || "scroll",
         backgroundOpacity: component.backgroundOpacity ? String(component.backgroundOpacity) : (props.backgroundOpacity ? String(props.backgroundOpacity) : "100"),
+        contentVisibility: (component.contentVisibility || props.contentVisibility || "all") as "all" | "desktop" | "mobile",
+        displayConditions: component.displayConditions || props.displayConditions || [],
       });
 
       // Initialize units from component
@@ -178,7 +185,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
   }, [component?.id]); // Only update when component ID changes
 
   const handleStyleChange = React.useCallback(
-    (key: keyof StyleState, value: string) => {
+    (key: keyof StyleState, value: string | string[] | "all" | "desktop" | "mobile") => {
       // Update local state immediately for responsive UI
       setStyles((prev) => ({
         ...prev,
@@ -193,8 +200,11 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         key === "borderColor"
       ) {
         updates[key] = value;
+      } else if (key === "displayConditions" || key === "contentVisibility") {
+        // These are special properties that don't need conversion
+        updates[key] = value;
       } else {
-        updates[key] = isNaN(Number(value)) ? value : Number(value);
+        updates[key] = isNaN(Number(value as string)) ? value : Number(value as string);
       }
 
       // Store in pending updates
@@ -1100,7 +1110,6 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                 onChange={(value) => handleStyleChange("borderWidth", value)}
                 type="number"
                 placeholder="0"
-                max={50}
               />
               <StyleInput
                 label="Border Radius (px)"
@@ -1108,9 +1117,91 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                 onChange={(value) => handleStyleChange("borderRadius", value)}
                 type="number"
                 placeholder="0"
-                max={200}
               />
             </>
+          )}
+        </div>
+
+        {/* Content Visibility Section */}
+        <div>
+          <SectionHeader title="Content Visibility" section="contentVisibility" />
+          {expandedSections.contentVisibility && (
+            <div className="px-4 py-4 space-y-4 bg-gray-50">
+              <p className="text-xs text-gray-600 mb-3">Display or hide content based on the type of device or other specific conditions</p>
+
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-3">Show on:</label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "all", label: "All devices", icon: null },
+                    { value: "desktop", label: "Only on desktop", icon: Monitor },
+                    { value: "mobile", label: "Only on mobile", icon: Smartphone },
+                  ].map((opt) => {
+                    const IconComponent = opt.icon;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => handleStyleChange("contentVisibility", opt.value)}
+                        className={cn(
+                          "px-3 py-2 rounded-full border text-xs font-medium flex items-center gap-1.5 transition-colors",
+                          styles.contentVisibility === opt.value
+                            ? "bg-blue-100 border-blue-400 text-blue-700"
+                            : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                        )}
+                      >
+                        {IconComponent && <IconComponent className="w-3.5 h-3.5" />}
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Display Conditions */}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-xs font-semibold text-gray-700">Display conditions</label>
+                  <button
+                    onClick={() => {
+                      handleStyleChange("displayConditions", [...styles.displayConditions, ""]);
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                  >
+                    + Add condition
+                  </button>
+                </div>
+
+                {/* Display Conditions List */}
+                {styles.displayConditions.length > 0 && (
+                  <div className="space-y-2">
+                    {styles.displayConditions.map((condition, idx) => (
+                      <div key={idx} className="flex gap-2 items-start bg-white p-2.5 rounded border border-gray-200">
+                        <Input
+                          type="text"
+                          value={condition}
+                          onChange={(e) => {
+                            const newConditions = [...styles.displayConditions];
+                            newConditions[idx] = e.target.value;
+                            handleStyleChange("displayConditions", newConditions);
+                          }}
+                          placeholder="Add condition..."
+                          className="flex-1 text-xs"
+                        />
+                        <button
+                          onClick={() => {
+                            const newConditions = styles.displayConditions.filter((_, i) => i !== idx);
+                            handleStyleChange("displayConditions", newConditions);
+                          }}
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </div>
