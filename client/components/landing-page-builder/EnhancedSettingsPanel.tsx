@@ -89,12 +89,12 @@ const SpacingInput: React.FC<{
     const numVal = Number(val);
     if (isNaN(numVal)) return "0";
 
-    // For percentage, cap at 100
+    // For percentage, cap at 0-100
     if (currentUnit === "%") {
       return String(Math.min(100, Math.max(0, numVal)));
     }
-    // For px, allow any non-negative value
-    return String(Math.max(0, numVal));
+    // For px, allow any value including negative
+    return String(numVal);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -127,7 +127,7 @@ const SpacingInput: React.FC<{
 
   const handleDecrement = () => {
     const current = Number(value || "0");
-    const newVal = Math.max(0, current - 1);
+    const newVal = current - 1;
     const validated = validateValue(String(newVal), unit);
     onValueChange(validated);
   };
