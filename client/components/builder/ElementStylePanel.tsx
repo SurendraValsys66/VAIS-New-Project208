@@ -357,7 +357,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
 
   if (!component) {
     return (
-      <aside className="w-80 flex-shrink-0 h-full border-l border-gray-200 bg-white flex flex-col min-h-0">
+      <div className="flex flex-col h-full min-h-0">
         <div className="px-4 py-4 border-b border-gray-200 flex items-center justify-between">
           <h3 className="text-sm font-bold text-gray-700">Style Panel</h3>
           <Button
@@ -372,12 +372,12 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
           Select an element to edit
         </div>
-      </aside>
+      </div>
     );
   }
 
   return (
-    <aside className="w-80 flex-shrink-0 h-full border-l border-gray-200 bg-white flex flex-col overflow-hidden min-h-0">
+    <div className="flex flex-col h-full overflow-hidden min-h-0">
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-200 flex items-center justify-between">
         <div>
@@ -635,6 +635,6 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
           )}
         </div>
       </div>
-    </aside>
+    </div>
   );
 };
