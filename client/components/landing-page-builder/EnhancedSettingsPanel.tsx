@@ -1038,51 +1038,55 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
                 )}
               </div>
               {expandedSections.has("padding") && (
-                <div className="space-y-3">
-                  <NumberInput
-                    label="Padding Top"
-                    value={props.paddingTop || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, paddingTop: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Padding Bottom"
-                    value={props.paddingBottom || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, paddingBottom: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Padding Left"
-                    value={props.paddingLeft || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, paddingLeft: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Padding Right"
-                    value={props.paddingRight || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, paddingRight: value },
-                      })
-                    }
-                    unit="px"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: "paddingTop" },
+                    { key: "paddingRight" },
+                    { key: "paddingBottom" },
+                    { key: "paddingLeft" },
+                  ].map(({ key }) => (
+                    <div key={key} className="flex gap-1 items-center">
+                      <span className="text-xs text-gray-500">⊞</span>
+                      <Input
+                        type="number"
+                        value={props[key as keyof typeof props] || "0"}
+                        onChange={(e) =>
+                          onBlockUpdate({
+                            ...block,
+                            properties: { ...props, [key]: e.target.value },
+                          })
+                        }
+                        className="w-12 text-xs h-8"
+                      />
+                      <span className="text-xs text-gray-500 w-5">px</span>
+                      <div className="flex flex-col gap-0">
+                        <button
+                          onClick={() => {
+                            const current = Number(props[key as keyof typeof props] || "0");
+                            onBlockUpdate({
+                              ...block,
+                              properties: { ...props, [key]: String(current + 1) },
+                            });
+                          }}
+                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          onClick={() => {
+                            const current = Number(props[key as keyof typeof props] || "0");
+                            onBlockUpdate({
+                              ...block,
+                              properties: { ...props, [key]: String(Math.max(0, current - 1)) },
+                            });
+                          }}
+                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -1103,51 +1107,55 @@ export const EnhancedSettingsPanel: React.FC<EnhancedSettingsPanelProps> = ({
                 )}
               </div>
               {expandedSections.has("margin") && (
-                <div className="space-y-3">
-                  <NumberInput
-                    label="Margin Top"
-                    value={props.marginTop || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, marginTop: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Margin Bottom"
-                    value={props.marginBottom || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, marginBottom: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Margin Left"
-                    value={props.marginLeft || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, marginLeft: value },
-                      })
-                    }
-                    unit="px"
-                  />
-                  <NumberInput
-                    label="Margin Right"
-                    value={props.marginRight || "0"}
-                    onChange={(value) =>
-                      onBlockUpdate({
-                        ...block,
-                        properties: { ...props, marginRight: value },
-                      })
-                    }
-                    unit="px"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: "marginTop" },
+                    { key: "marginRight" },
+                    { key: "marginBottom" },
+                    { key: "marginLeft" },
+                  ].map(({ key }) => (
+                    <div key={key} className="flex gap-1 items-center">
+                      <span className="text-xs text-gray-500">⊞</span>
+                      <Input
+                        type="number"
+                        value={props[key as keyof typeof props] || "0"}
+                        onChange={(e) =>
+                          onBlockUpdate({
+                            ...block,
+                            properties: { ...props, [key]: e.target.value },
+                          })
+                        }
+                        className="w-12 text-xs h-8"
+                      />
+                      <span className="text-xs text-gray-500 w-5">px</span>
+                      <div className="flex flex-col gap-0">
+                        <button
+                          onClick={() => {
+                            const current = Number(props[key as keyof typeof props] || "0");
+                            onBlockUpdate({
+                              ...block,
+                              properties: { ...props, [key]: String(current + 1) },
+                            });
+                          }}
+                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          onClick={() => {
+                            const current = Number(props[key as keyof typeof props] || "0");
+                            onBlockUpdate({
+                              ...block,
+                              properties: { ...props, [key]: String(Math.max(0, current - 1)) },
+                            });
+                          }}
+                          className="text-xs text-gray-600 hover:text-gray-900 leading-none"
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
