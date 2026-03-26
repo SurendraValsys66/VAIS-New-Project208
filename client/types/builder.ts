@@ -42,6 +42,16 @@ export interface BuilderComponent {
   borderColor?: string;
   borderWidth?: number;
   borderRadius?: number;
+  // Background image properties
+  backgroundImageUrl?: string;
+  backgroundSize?: "cover" | "contain" | "auto" | "stretch";
+  backgroundPosition?: "top" | "center" | "bottom" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  backgroundRepeat?: "repeat" | "no-repeat" | "repeat-x" | "repeat-y";
+  backgroundAttachment?: "scroll" | "fixed";
+  backgroundOpacity?: number;
+  // Layout properties
+  textAlign?: "left" | "center" | "right" | "justify";
+  justifyContent?: "flex-start" | "center" | "flex-end" | "space-between";
   // Unit tracking for sizing
   widthUnit?: "%" | "px";
   heightUnit?: "px";
