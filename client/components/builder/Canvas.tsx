@@ -164,25 +164,34 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
             variant="outline"
             size="sm"
             onClick={handleCopyLayout}
-            className="gap-2"
+            className="w-10 h-10 p-0 flex items-center justify-center hover:bg-gray-100 transition-colors group relative"
+            title="Copy"
           >
             <Copy className="w-4 h-4" />
-            Copy
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Copy
+            </span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsPreviewMode(true)}
-            className="gap-2"
+            className="w-10 h-10 p-0 flex items-center justify-center hover:bg-gray-100 transition-colors group relative"
+            title="Preview"
           >
             <Eye className="w-4 h-4" />
-            Preview
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Preview
+            </span>
           </Button>
           <Button
-            className="gap-2 bg-valasys-orange hover:bg-valasys-orange/90 text-white"
+            className="w-10 h-10 p-0 flex items-center justify-center bg-valasys-orange hover:bg-valasys-orange/90 text-white transition-colors group relative"
+            title="Publish"
           >
             <Save className="w-4 h-4" />
-            Publish
+            <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Publish
+            </span>
           </Button>
         </div>
       </div>
