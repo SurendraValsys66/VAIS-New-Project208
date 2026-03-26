@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { DRAG_TYPES, ComponentType, BuilderComponent } from "@/types/builder";
+import { DRAG_TYPES, ComponentType, BuilderComponent, PreviewDevice } from "@/types/builder";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/hooks/useLayout";
 import { ComponentRenderer } from "./Renderer";
@@ -8,7 +8,7 @@ import { ComponentsPanel } from "./ComponentsPanel";
 import { ElementStylePanel } from "./ElementStylePanel";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { ArrowLeft, Copy, Eye, Save } from "lucide-react";
+import { ArrowLeft, Copy, Eye, Save, Monitor, Tablet, Smartphone } from "lucide-react";
 import { templateLayoutMap } from "@/components/predefine-email-templates/templates";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,8 +20,15 @@ interface BuilderCanvasProps {
 
 const DEFAULT_LAYOUT: BuilderComponent[] = [];
 
+const PREVIEW_DEVICE_PRESETS: Record<PreviewDevice, { label: string; width: number | null; icon: React.ComponentType<{ className?: string }> }> = {
+  desktop: { label: "Desktop", width: null, icon: Monitor },
+  tablet: { label: "Tablet", width: 768, icon: Tablet },
+  mobile: { label: "Mobile", width: 390, icon: Smartphone },
+};
+
 export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId, initialLayout }) => {
   const [isPreviewMode, setIsPreviewMode] = React.useState(false);
+  const [previewDevice, setPreviewDevice] = React.useState<PreviewDevice>("desktop");
   const [selectedComponentId, setSelectedComponentId] = React.useState<string | null>(null);
   const { toast } = useToast();
 
@@ -48,6 +55,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
   };
 
   const selectedComponent = selectedComponentId ? findComponentById(selectedComponentId) : null;
+  const currentPreviewPreset = PREVIEW_DEVICE_PRESETS[previewDevice];
 
   const handleCopyLayout = async () => {
     try {
@@ -91,39 +99,79 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
   if (isPreviewMode) {
     return (
       <div className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-white">
-        <header className="h-14 border-b bg-white px-6 flex items-center justify-between sticky top-0 z-40">
+        <header className="sticky top-0 z-40 flex min-h-14 flex-wrap items-center justify-between gap-4 border-b bg-white px-6 py-3">
           <div className="flex items-center gap-4">
-            <span className="text-sm font-bold text-gray-900 tracking-tight">
-              {templateId === "online-marketing-conference"
-                ? "Online Marketing Conference"
-                : "New Page"}
-            </span>
+            <div>
+              <div className="text-sm font-bold text-gray-900 tracking-tight">
+                {templateId === "online-marketing-conference"
+                  ? "Online Marketing Conference"
+                  : "New Page"}
+              </div>
+              <div className="text-xs text-gray-500">
+                {currentPreviewPreset.label}
+                {currentPreviewPreset.width ? ` (${currentPreviewPreset.width}px)` : " (Full width)"}
+              </div>
+            </div>
             <span className="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full font-black uppercase tracking-wider">
               Preview
             </span>
           </div>
-          <button
-            onClick={() => setIsPreviewMode(false)}
-            className="text-sm font-medium px-4 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-          >
-            Back to Editor
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
+              {Object.entries(PREVIEW_DEVICE_PRESETS).map(([device, preset]) => {
+                const Icon = preset.icon;
+
+                return (
+                  <button
+                    key={device}
+                    onClick={() => setPreviewDevice(device as PreviewDevice)}
+                    className={cn(
+                      "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+                      previewDevice === device
+                        ? "bg-valasys-orange text-white shadow-sm"
+                        : "text-gray-600 hover:bg-white"
+                    )}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span>{preset.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setIsPreviewMode(false)}
+              className="text-sm font-medium px-4 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              Back to Editor
+            </button>
+          </div>
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-white p-8">
-          <div className="w-full max-w-5xl mx-auto min-h-full rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-            {layout.map((comp) => (
-              <ComponentRenderer
-                key={comp.id}
-                component={comp}
-                onUpdate={() => {}}
-                onRemove={() => {}}
-                onMove={() => {}}
-                onAdd={() => {}}
-                onDuplicate={() => {}}
-                onSelect={() => {}}
-                isSelected={false}
-              />
-            ))}
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-gray-50 p-4 sm:p-8">
+          <div className="flex justify-center">
+            <div
+              className="min-h-full rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200"
+              style={{
+                width: currentPreviewPreset.width ? `${currentPreviewPreset.width}px` : "100%",
+                maxWidth: "100%",
+              }}
+            >
+              <div className="space-y-4">
+                {layout.map((comp) => (
+                  <ComponentRenderer
+                    key={comp.id}
+                    component={comp}
+                    onUpdate={() => {}}
+                    onRemove={() => {}}
+                    onMove={() => {}}
+                    onAdd={() => {}}
+                    onDuplicate={() => {}}
+                    onSelect={() => {}}
+                    isSelected={false}
+                    previewDevice={previewDevice}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

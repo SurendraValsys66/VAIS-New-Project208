@@ -18,6 +18,8 @@ export type ComponentType =
   | "contact-form"
   | "card";
 
+export type PreviewDevice = "desktop" | "tablet" | "mobile";
+
 export interface BuilderComponent {
   id: string;
   type: ComponentType;
@@ -57,7 +59,7 @@ export interface BuilderComponent {
   heightUnit?: "px";
   fontSizeUnit?: "px" | "%";
   // Content visibility properties
-  contentVisibility?: "all" | "desktop" | "mobile";
+  contentVisibility?: "all" | "desktop" | "tablet" | "mobile";
   displayConditions?: string[];
 }
 

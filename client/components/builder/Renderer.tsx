@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop, useDrag } from "react-dnd";
-import { BuilderComponent, DRAG_TYPES, ComponentType } from "@/types/builder";
+import { BuilderComponent, DRAG_TYPES, ComponentType, PreviewDevice } from "@/types/builder";
 import { cn } from "@/lib/utils";
 import {
   Trash2,
@@ -28,6 +28,7 @@ interface RendererProps {
   isSelected?: boolean;
   parentId?: string | null;
   parentIndex?: number;
+  previewDevice?: PreviewDevice;
 }
 
 export const ComponentRenderer: React.FC<RendererProps> = ({
@@ -41,6 +42,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
   isSelected,
   parentId,
   parentIndex,
+  previewDevice,
 }) => {
 
   const handleCopyComponent = () => {
@@ -90,6 +92,21 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
     }),
   });
 
+  const isVisibleOnPreviewDevice = () => {
+    if (!previewDevice) return true;
+
+    switch (component.contentVisibility) {
+      case "desktop":
+        return previewDevice === "desktop";
+      case "tablet":
+        return previewDevice === "tablet";
+      case "mobile":
+        return previewDevice === "mobile";
+      default:
+        return true;
+    }
+  };
+
   const renderChildren = () => {
     return (
       <div
@@ -115,6 +132,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             isSelected={isSelected && component.id === child.id}
             parentId={component.id}
             parentIndex={childIndex}
+            previewDevice={previewDevice}
           />
         ))}
         {component.children?.length === 0 && (
@@ -207,6 +225,10 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
 
     return styles;
   };
+
+  if (!isVisibleOnPreviewDevice()) {
+    return null;
+  }
 
   const wrapWithControls = (content: React.ReactNode) => {
     return (

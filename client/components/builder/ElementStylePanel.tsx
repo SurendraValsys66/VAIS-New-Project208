@@ -2,7 +2,7 @@ import React from "react";
 import { BuilderComponent } from "@/types/builder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, AlignLeft, AlignCenter, AlignRight, AlignJustify, Monitor, Smartphone } from "lucide-react";
+import { ChevronDown, X, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, AlignLeft, AlignCenter, AlignRight, AlignJustify, Monitor, Smartphone, Tablet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ElementStylePanelProps {
@@ -36,7 +36,7 @@ interface StyleState {
   backgroundRepeat: "repeat" | "no-repeat" | "repeat-x" | "repeat-y";
   backgroundAttachment: "scroll" | "fixed";
   backgroundOpacity: string;
-  contentVisibility: "all" | "desktop" | "mobile";
+  contentVisibility: "all" | "desktop" | "tablet" | "mobile";
   displayConditions: string[];
 }
 
@@ -171,7 +171,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         backgroundRepeat: component.backgroundRepeat || props.backgroundRepeat || "no-repeat",
         backgroundAttachment: component.backgroundAttachment || props.backgroundAttachment || "scroll",
         backgroundOpacity: component.backgroundOpacity ? String(component.backgroundOpacity) : (props.backgroundOpacity ? String(props.backgroundOpacity) : "100"),
-        contentVisibility: (component.contentVisibility || props.contentVisibility || "all") as "all" | "desktop" | "mobile",
+        contentVisibility: (component.contentVisibility || props.contentVisibility || "all") as "all" | "desktop" | "tablet" | "mobile",
         displayConditions: component.displayConditions || props.displayConditions || [],
       });
 
@@ -185,7 +185,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
   }, [component?.id]); // Only update when component ID changes
 
   const handleStyleChange = React.useCallback(
-    (key: keyof StyleState, value: string | string[] | "all" | "desktop" | "mobile") => {
+    (key: keyof StyleState, value: string | string[] | "all" | "desktop" | "tablet" | "mobile") => {
       // Update local state immediately for responsive UI
       setStyles((prev) => ({
         ...prev,
@@ -1135,6 +1135,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                   {[
                     { value: "all", label: "All devices", icon: null },
                     { value: "desktop", label: "Only on desktop", icon: Monitor },
+                    { value: "tablet", label: "Only on tablet", icon: Tablet },
                     { value: "mobile", label: "Only on mobile", icon: Smartphone },
                   ].map((opt) => {
                     const IconComponent = opt.icon;
