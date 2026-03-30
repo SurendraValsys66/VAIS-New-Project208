@@ -12,6 +12,7 @@ interface FeaturesSectionProps {
   onSelect?: (elementInfo: { type: string; id?: string } | null) => void;
   selectedFeatureId?: string | null;
   selectedHeaderElement?: string | null;
+  imageUrl?: string;
 }
 
 interface Feature {
@@ -32,6 +33,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
   onUpdate,
   onSelect,
   selectedHeaderElement,
+  imageUrl,
 }) => {
   const [selectedFeatureId, setSelectedFeatureId] = React.useState<string | null>(null);
   const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
@@ -514,6 +516,17 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
             </div>
           ))}
         </div>
+
+        {/* Image Section */}
+        {imageUrl && (
+          <div className="mt-8 w-full">
+            <img
+              src={imageUrl}
+              alt="Feature showcase"
+              className="w-full h-auto rounded-lg object-cover"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -78,6 +78,9 @@ interface StyleState {
   featureDescription?: string;
   featureGridHeading?: string;
   featureGridDescription?: string;
+  featureGridImageUrl?: string;
+  featureGridPrimaryButtonText?: string;
+  featureGridSecondaryButtonText?: string;
 }
 
 interface SpacingState {
@@ -170,6 +173,9 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     paragraphTextAlign: "left",
     buttonTextAlign: "left",
     selectedHeroElement: "",
+    featureGridImageUrl: "",
+    featureGridPrimaryButtonText: "",
+    featureGridSecondaryButtonText: "",
   });
 
   const [spacing, setSpacing] = React.useState<SpacingState>({
@@ -341,6 +347,11 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
         featureIcon,
         featureTitle,
         featureDescription,
+        featureGridHeading: component.featureGridHeading || "",
+        featureGridDescription: component.featureGridDescription || "",
+        featureGridImageUrl: component.featureGridImageUrl || "",
+        featureGridPrimaryButtonText: component.featureGridPrimaryButtonText || "",
+        featureGridSecondaryButtonText: component.featureGridSecondaryButtonText || "",
       });
 
       // Initialize units from component
@@ -906,6 +917,174 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
                     placeholder="Enter description text..."
                   />
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Feature Grid Header Section */}
+        {component?.type === "feature-grid" && component?.selectedHeaderElement && (
+          <div>
+            <SectionHeader title="Content" section="featureHeader" />
+            {expandedSections.featureHeader && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    {component?.selectedHeaderElement === "heading" ? "Heading Text" : "Description Text"}
+                  </label>
+                  {component?.selectedHeaderElement === "heading" ? (
+                    <Input
+                      type="text"
+                      value={styles.featureGridHeading || ""}
+                      onChange={(e) => handleStyleChange("featureGridHeading", e.target.value)}
+                      placeholder="Enter heading text"
+                      className="text-xs h-8"
+                    />
+                  ) : (
+                    <textarea
+                      value={styles.featureGridDescription || ""}
+                      onChange={(e) => handleStyleChange("featureGridDescription", e.target.value)}
+                      placeholder="Enter description text"
+                      className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                      rows={3}
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Section Image URL
+                  </label>
+                  <Input
+                    type="text"
+                    value={styles.featureGridImageUrl || ""}
+                    onChange={(e) => handleStyleChange("featureGridImageUrl", e.target.value)}
+                    placeholder="Enter image URL"
+                    className="text-xs h-8"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Feature Grid Content Section */}
+        {component?.type === "feature-grid" && component?.selectedFeatureId && (
+          <div>
+            <SectionHeader title="Feature Content" section="featureContent" />
+            {expandedSections.featureContent && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Number / Icon
+                  </label>
+                  <Input
+                    type="text"
+                    value={styles.featureIcon || ""}
+                    onChange={(e) => handleStyleChange("featureIcon", e.target.value)}
+                    placeholder="01, 02, 03 or icon text"
+                    maxLength={2}
+                    className="text-xs h-8"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Heading
+                  </label>
+                  <Input
+                    type="text"
+                    value={styles.featureTitle || ""}
+                    onChange={(e) => handleStyleChange("featureTitle", e.target.value)}
+                    placeholder="Enter feature title"
+                    className="text-xs h-8"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    Feature Description
+                  </label>
+                  <textarea
+                    value={styles.featureDescription || ""}
+                    onChange={(e) => handleStyleChange("featureDescription", e.target.value)}
+                    placeholder="Enter feature description"
+                    className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Features Content Section */}
+        {component?.type === "features" && (
+          <div>
+            <SectionHeader title="Content" section="featureContent" />
+            {expandedSections.featureContent && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50 border-b border-gray-200">
+                {component?.headerElements && component.headerElements.length > 0 ? (
+                  <>
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700 block mb-2">
+                        Header Elements
+                      </label>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {component.headerElements.map((element: any) => (
+                          <div
+                            key={element.id}
+                            className={cn(
+                              "p-2 border rounded text-xs cursor-pointer hover:bg-white transition-colors",
+                              component.selectedHeaderElement === element.id
+                                ? "border-blue-400 bg-blue-50"
+                                : "border-gray-200"
+                            )}
+                            onClick={() => {
+                              onUpdate({ selectedHeaderElement: element.id });
+                            }}
+                          >
+                            <div className="font-medium text-gray-700">
+                              {element.type === "heading" ? "🎯 Heading" : "📝 Description"}
+                            </div>
+                            <div className="text-gray-500 truncate mt-1">
+                              {element.text || "(empty)"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {component?.selectedHeaderElement && (
+                      <div>
+                        <label className="text-xs font-semibold text-gray-700 block mb-2">
+                          Edit {component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.type === "heading" ? "Heading" : "Description"}
+                        </label>
+                        {component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.type === "heading" ? (
+                          <Input
+                            type="text"
+                            value={component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.text || ""}
+                            onChange={(e) => onUpdate({ headerElementText: e.target.value })}
+                            placeholder="Enter heading text"
+                            className="text-xs h-8"
+                          />
+                        ) : (
+                          <textarea
+                            value={component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.text || ""}
+                            onChange={(e) => onUpdate({ headerElementText: e.target.value })}
+                            placeholder="Enter description text"
+                            className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                            rows={3}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-xs text-gray-500 text-center py-4">
+                    No header elements found. Create one by clicking copy/add on heading or description in the editor.
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1911,161 +2090,6 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
             </div>
           )}
         </div>
-
-        {/* Feature Grid Header Section */}
-        {component?.type === "feature-grid" && component?.selectedHeaderElement && (
-          <div>
-            <SectionHeader title="Content" section="featureHeader" />
-            {expandedSections.featureHeader && (
-              <div className="px-4 py-3 space-y-4 bg-gray-50">
-                <div>
-                  <label className="text-xs font-semibold text-gray-700 block mb-2">
-                    {component?.selectedHeaderElement === "heading" ? "Heading Text" : "Description Text"}
-                  </label>
-                  {component?.selectedHeaderElement === "heading" ? (
-                    <Input
-                      type="text"
-                      value={styles.featureGridHeading || ""}
-                      onChange={(e) => handleStyleChange("featureGridHeading", e.target.value)}
-                      placeholder="Enter heading text"
-                      className="text-xs h-8"
-                    />
-                  ) : (
-                    <textarea
-                      value={styles.featureGridDescription || ""}
-                      onChange={(e) => handleStyleChange("featureGridDescription", e.target.value)}
-                      placeholder="Enter description text"
-                      className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
-                      rows={3}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Feature Grid Content Section */}
-        {component?.type === "feature-grid" && component?.selectedFeatureId && (
-          <div>
-            <SectionHeader title="Feature Content" section="featureContent" />
-            {expandedSections.featureContent && (
-              <div className="px-4 py-3 space-y-4 bg-gray-50">
-                <div>
-                  <label className="text-xs font-semibold text-gray-700 block mb-2">
-                    Feature Number / Icon
-                  </label>
-                  <Input
-                    type="text"
-                    value={styles.featureIcon || ""}
-                    onChange={(e) => handleStyleChange("featureIcon", e.target.value)}
-                    placeholder="01, 02, 03 or icon text"
-                    maxLength={2}
-                    className="text-xs h-8"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-gray-700 block mb-2">
-                    Feature Heading
-                  </label>
-                  <Input
-                    type="text"
-                    value={styles.featureTitle || ""}
-                    onChange={(e) => handleStyleChange("featureTitle", e.target.value)}
-                    placeholder="Enter feature title"
-                    className="text-xs h-8"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-gray-700 block mb-2">
-                    Feature Description
-                  </label>
-                  <textarea
-                    value={styles.featureDescription || ""}
-                    onChange={(e) => handleStyleChange("featureDescription", e.target.value)}
-                    placeholder="Enter feature description"
-                    className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
-                    rows={3}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Features Content Section */}
-        {component?.type === "features" && (
-          <div>
-            <SectionHeader title="Content" section="featureContent" />
-            {expandedSections.featureContent && (
-              <div className="px-4 py-3 space-y-4 bg-gray-50 border-b border-gray-200">
-                {component?.headerElements && component.headerElements.length > 0 ? (
-                  <>
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700 block mb-2">
-                        Header Elements
-                      </label>
-                      <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {component.headerElements.map((element: any) => (
-                          <div
-                            key={element.id}
-                            className={cn(
-                              "p-2 border rounded text-xs cursor-pointer hover:bg-white transition-colors",
-                              component.selectedHeaderElement === element.id
-                                ? "border-blue-400 bg-blue-50"
-                                : "border-gray-200"
-                            )}
-                            onClick={() => {
-                              onUpdate({ selectedHeaderElement: element.id });
-                            }}
-                          >
-                            <div className="font-medium text-gray-700">
-                              {element.type === "heading" ? "🎯 Heading" : "📝 Description"}
-                            </div>
-                            <div className="text-gray-500 truncate mt-1">
-                              {element.text || "(empty)"}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {component?.selectedHeaderElement && (
-                      <div>
-                        <label className="text-xs font-semibold text-gray-700 block mb-2">
-                          Edit {component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.type === "heading" ? "Heading" : "Description"}
-                        </label>
-                        {component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.type === "heading" ? (
-                          <Input
-                            type="text"
-                            value={component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.text || ""}
-                            onChange={(e) => onUpdate({ headerElementText: e.target.value })}
-                            placeholder="Enter heading text"
-                            className="text-xs h-8"
-                          />
-                        ) : (
-                          <textarea
-                            value={component.headerElements.find((e: any) => e.id === component.selectedHeaderElement)?.text || ""}
-                            onChange={(e) => onUpdate({ headerElementText: e.target.value })}
-                            placeholder="Enter description text"
-                            className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
-                            rows={3}
-                          />
-                        )}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-xs text-gray-500 text-center py-4">
-                    No header elements found. Create one by clicking copy/add on heading or description in the editor.
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

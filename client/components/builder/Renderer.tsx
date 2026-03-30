@@ -715,6 +715,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
           }}
           selectedFeatureId={component.selectedFeatureId}
           selectedHeaderElement={component.selectedHeaderElement}
+          imageUrl={component.featureGridImageUrl}
         />,
       );
 
