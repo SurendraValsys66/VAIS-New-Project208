@@ -76,6 +76,8 @@ interface StyleState {
   featureIcon?: string;
   featureTitle?: string;
   featureDescription?: string;
+  featureGridHeading?: string;
+  featureGridDescription?: string;
 }
 
 interface SpacingState {
@@ -198,6 +200,7 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
     borders: true,
     contentVisibility: true,
     featureContent: true,
+    featureHeader: true,
   });
 
   const [groupPaddingValues, setGroupPaddingValues] = React.useState(false);
@@ -1908,6 +1911,39 @@ export const ElementStylePanel: React.FC<ElementStylePanelProps> = ({
             </div>
           )}
         </div>
+
+        {/* Feature Grid Header Section */}
+        {component?.type === "feature-grid" && component?.selectedHeaderElement && (
+          <div>
+            <SectionHeader title="Content" section="featureHeader" />
+            {expandedSections.featureHeader && (
+              <div className="px-4 py-3 space-y-4 bg-gray-50">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-2">
+                    {component?.selectedHeaderElement === "heading" ? "Heading Text" : "Description Text"}
+                  </label>
+                  {component?.selectedHeaderElement === "heading" ? (
+                    <Input
+                      type="text"
+                      value={styles.featureGridHeading || ""}
+                      onChange={(e) => handleStyleChange("featureGridHeading", e.target.value)}
+                      placeholder="Enter heading text"
+                      className="text-xs h-8"
+                    />
+                  ) : (
+                    <textarea
+                      value={styles.featureGridDescription || ""}
+                      onChange={(e) => handleStyleChange("featureGridDescription", e.target.value)}
+                      placeholder="Enter description text"
+                      className="w-full text-xs border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                      rows={3}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Feature Grid Content Section */}
         {component?.type === "feature-grid" && component?.selectedFeatureId && (

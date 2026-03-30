@@ -699,10 +699,22 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             };
             onUpdate(component.id, updates);
           }}
-          onSelect={(featureId) => {
-            onUpdate(component.id, { selectedFeatureId: featureId });
+          onSelect={(elementInfo) => {
+            const updates: any = {};
+            if (!elementInfo) {
+              updates.selectedFeatureId = null;
+              updates.selectedHeaderElement = null;
+            } else if (elementInfo.type === "feature") {
+              updates.selectedFeatureId = elementInfo.id;
+              updates.selectedHeaderElement = null;
+            } else {
+              updates.selectedFeatureId = null;
+              updates.selectedHeaderElement = elementInfo.type;
+            }
+            onUpdate(component.id, updates);
           }}
           selectedFeatureId={component.selectedFeatureId}
+          selectedHeaderElement={component.selectedHeaderElement}
         />,
       );
 

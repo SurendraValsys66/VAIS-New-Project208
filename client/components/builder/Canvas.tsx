@@ -463,6 +463,19 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
                   } else {
                     updateComponent(selectedComponentId, updates);
                   }
+                } else if (selectedComponent?.type === "feature-grid" && selectedComponent?.selectedHeaderElement) {
+                  // Handle feature-grid heading/description updates
+                  const { featureGridHeading, featureGridDescription, ...otherUpdates } = updates as any;
+
+                  if (featureGridHeading !== undefined || featureGridDescription !== undefined) {
+                    updateComponent(selectedComponentId, {
+                      ...otherUpdates,
+                      ...(featureGridHeading !== undefined && { featureGridHeading }),
+                      ...(featureGridDescription !== undefined && { featureGridDescription }),
+                    });
+                  } else {
+                    updateComponent(selectedComponentId, updates);
+                  }
                 } else {
                   updateComponent(selectedComponentId, updates);
                 }
