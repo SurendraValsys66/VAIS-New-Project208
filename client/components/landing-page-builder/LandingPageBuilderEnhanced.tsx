@@ -151,10 +151,12 @@ export const LandingPageBuilderEnhanced: React.FC<LandingPageBuilderEnhancedProp
     if (blockIndex === -1) return;
 
     const blockToDuplicate = page.blocks[blockIndex];
-    const duplicatedBlock: LandingPageBlock = {
+
+    // Deep copy the block including all properties and children
+    const duplicatedBlock: LandingPageBlock = JSON.parse(JSON.stringify({
       ...blockToDuplicate,
       id: `${blockToDuplicate.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    };
+    }));
 
     const newBlocks = [
       ...page.blocks.slice(0, blockIndex + 1),
