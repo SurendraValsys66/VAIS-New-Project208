@@ -98,20 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   };
 
-  const handleEditableInput = (
-    elementId: "badge" | "heading" | "paragraph",
-    event: React.FormEvent<HTMLElement>,
-  ) => {
-    handleElementUpdate(elementId, event.currentTarget.textContent || "");
-  };
-
   const handleEditableFocus = (event: React.FocusEvent<HTMLElement>) => {
-    const selection = window.getSelection();
-    const range = document.createRange();
-
-    range.selectNodeContents(event.currentTarget);
-    selection?.removeAllRanges();
-    selection?.addRange(range);
     setEditingElementId(event.currentTarget.dataset.elementId || null);
   };
 
@@ -275,9 +262,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <span
                 contentEditable={isSelected}
                 suppressContentEditableWarning
-                onInput={(e) => {
-                  handleEditableInput("badge", e);
-                }}
                 data-element-id={element.id}
                 onFocus={handleEditableFocus}
                 onBlur={(e) => {
@@ -318,9 +302,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <h1
               contentEditable={isSelected}
               suppressContentEditableWarning
-              onInput={(e) => {
-                handleEditableInput("heading", e);
-              }}
               data-element-id={element.id}
               onFocus={handleEditableFocus}
               onBlur={(e) => {
@@ -360,9 +341,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <p
               contentEditable={isSelected}
               suppressContentEditableWarning
-              onInput={(e) => {
-                handleEditableInput("paragraph", e);
-              }}
               data-element-id={element.id}
               onFocus={handleEditableFocus}
               onBlur={(e) => {
