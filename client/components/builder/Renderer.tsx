@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop, useDrag } from "react-dnd";
-import { BuilderComponent, DRAG_TYPES, ComponentType, PreviewDevice } from "@/types/builder";
+import { BuilderComponent, DRAG_TYPES, ComponentType, PreviewDevice, PricingPlan } from "@/types/builder";
 import { cn } from "@/lib/utils";
 import {
   Trash2,
@@ -33,6 +33,85 @@ interface RendererProps {
   parentIndex?: number;
   previewDevice?: PreviewDevice;
 }
+
+const DEFAULT_PRICING_PLANS: PricingPlan[] = [
+  {
+    id: "starter-plan",
+    name: "Starter",
+    price: "$19",
+    period: "/mo",
+    features: [
+      "Benefit number 1",
+      "Benefit number 2",
+      "Benefit number 3",
+      "Benefit number 4",
+    ],
+    buttonText: "Choose Starter",
+  },
+  {
+    id: "pro-plan",
+    name: "Pro",
+    price: "$49",
+    period: "/mo",
+    features: [
+      "Benefit number 1",
+      "Benefit number 2",
+      "Benefit number 3",
+      "Benefit number 4",
+    ],
+    buttonText: "Choose Pro",
+    isFeatured: true,
+  },
+  {
+    id: "enterprise-plan",
+    name: "Enterprise",
+    price: "$99",
+    period: "/mo",
+    features: [
+      "Benefit number 1",
+      "Benefit number 2",
+      "Benefit number 3",
+      "Benefit number 4",
+    ],
+    buttonText: "Choose Enterprise",
+  },
+];
+
+const createPricingPlanId = () =>
+  `pricing-plan-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+const createPricingPlan = (index: number): PricingPlan => ({
+  id: createPricingPlanId(),
+  name: `Plan ${index}`,
+  price: `$${index * 25}`,
+  period: "/mo",
+  features: [
+    "Benefit number 1",
+    "Benefit number 2",
+    "Benefit number 3",
+    "Benefit number 4",
+  ],
+  buttonText: `Choose Plan ${index}`,
+});
+
+const getPricingPlans = (plans?: PricingPlan[]) =>
+  (plans?.length ? plans : DEFAULT_PRICING_PLANS).map((plan) => ({
+    ...plan,
+    features: [...plan.features],
+  }));
+
+const ensureFeaturedPricingPlan = (plans: PricingPlan[]) => {
+  if (plans.length === 0 || plans.some((plan) => plan.isFeatured)) {
+    return plans;
+  }
+
+  const featuredIndex = Math.min(1, plans.length - 1);
+
+  return plans.map((plan, index) => ({
+    ...plan,
+    isFeatured: index === featuredIndex,
+  }));
+};
 
 export const ComponentRenderer: React.FC<RendererProps> = ({
   component,
@@ -236,6 +315,94 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
   const [selectedPricingPlan, setSelectedPricingPlan] = React.useState<string | null>(null);
   const [hoveredPricingText, setHoveredPricingText] = React.useState<string | null>(null);
   const [selectedPricingText, setSelectedPricingText] = React.useState<string | null>(null);
+
+  const pricingHeadingText = component.pricingHeadingText ?? "Simple, transparent pricing";
+  const pricingSubheadingText = component.pricingSubheadingText ?? "Choose the plan that's right for you.";
+  const pricingPlans = React.useMemo(
+    () => ensureFeaturedPricingPlan(getPricingPlans(component.pricingPlans)),
+    [component.pricingPlans],
+  );
+
+  const updatePricingPlans = (plans: PricingPlan[]) => {
+    onUpdate(component.id, {
+      pricingPlans: ensureFeaturedPricingPlan(plans),
+    });
+  };
+
+  const updatePricingPlan = (planId: string, updates: Partial<PricingPlan>) => {
+    updatePricingPlans(
+      pricingPlans.map((plan) =>
+        plan.id === planId
+          ? {
+              ...plan,
+              ...updates,
+            }
+          : plan,
+      ),
+    );
+  };
+
+  const updatePricingFeature = (
+    planId: string,
+    featureIndex: number,
+    value: string,
+  ) => {
+    updatePricingPlans(
+      pricingPlans.map((plan) =>
+        plan.id === planId
+          ? {
+              ...plan,
+              features: plan.features.map((feature, index) =>
+                index === featureIndex ? value : feature,
+              ),
+            }
+          : plan,
+      ),
+    );
+  };
+
+  const handleCopyPricingPlan = (planId: string) => {
+    const planIndex = pricingPlans.findIndex((plan) => plan.id === planId);
+
+    if (planIndex === -1) {
+      return;
+    }
+
+    const sourcePlan = pricingPlans[planIndex];
+    const copiedPlan: PricingPlan = {
+      ...sourcePlan,
+      id: createPricingPlanId(),
+      name: `${sourcePlan.name} Copy`,
+      isFeatured: false,
+      features: [...sourcePlan.features],
+    };
+    const updatedPlans = [...pricingPlans];
+
+    updatedPlans.splice(planIndex + 1, 0, copiedPlan);
+    updatePricingPlans(updatedPlans);
+    setSelectedPricingPlan(copiedPlan.id);
+  };
+
+  const handleAddPricingPlan = (afterPlanId: string) => {
+    const planIndex = pricingPlans.findIndex((plan) => plan.id === afterPlanId);
+    const newPlan = createPricingPlan(pricingPlans.length + 1);
+    const updatedPlans = [...pricingPlans];
+
+    updatedPlans.splice(planIndex + 1, 0, newPlan);
+    updatePricingPlans(updatedPlans);
+    setSelectedPricingPlan(newPlan.id);
+  };
+
+  const handleDeletePricingPlan = (planId: string) => {
+    if (pricingPlans.length <= 1) {
+      return;
+    }
+
+    updatePricingPlans(pricingPlans.filter((plan) => plan.id !== planId));
+    setSelectedPricingPlan((currentPlanId) =>
+      currentPlanId === planId ? null : currentPlanId,
+    );
+  };
 
   if (!isVisibleOnPreviewDevice()) {
     return null;
@@ -731,81 +898,105 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             <div
               className="mb-4 inline-block w-fit rounded-2xl px-4 py-2 transition-all mx-auto"
               onMouseEnter={() => setHoveredPricingText("heading")}
-              onMouseLeave={() => setHoveredPricingText((currentText) => (currentText === "heading" ? null : currentText))}
+              onMouseLeave={() =>
+                setHoveredPricingText((currentText) =>
+                  currentText === "heading" ? null : currentText,
+                )
+              }
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedPricingText((currentText) => (currentText === "heading" ? null : "heading"));
+                setSelectedPricingText((currentText) =>
+                  currentText === "heading" ? null : "heading",
+                );
                 onSelect?.(component.id);
               }}
               style={{
                 display: "inline-block",
-                border: selectedPricingText === "heading"
-                  ? "2px solid #FF6A00"
-                  : hoveredPricingText === "heading"
-                    ? "2px dashed #FF6A00"
-                    : "2px solid transparent",
+                border:
+                  selectedPricingText === "heading"
+                    ? "2px solid #FF6A00"
+                    : hoveredPricingText === "heading"
+                      ? "2px dashed #FF6A00"
+                      : "2px solid transparent",
               }}
             >
               <h2
                 className="text-2xl font-black focus:outline-none focus:ring-0"
                 contentEditable
                 suppressContentEditableWarning
+                onInput={(e) =>
+                  onUpdate(component.id, {
+                    pricingHeadingText: e.currentTarget.textContent ?? "",
+                  })
+                }
                 style={{ outline: "none", boxShadow: "none", border: "none" }}
               >
-                Simple, transparent pricing
+                {pricingHeadingText}
               </h2>
             </div>
             <div
               className="mx-auto inline-block w-fit rounded-2xl px-4 py-2 transition-all"
               onMouseEnter={() => setHoveredPricingText("subheading")}
-              onMouseLeave={() => setHoveredPricingText((currentText) => (currentText === "subheading" ? null : currentText))}
+              onMouseLeave={() =>
+                setHoveredPricingText((currentText) =>
+                  currentText === "subheading" ? null : currentText,
+                )
+              }
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedPricingText((currentText) => (currentText === "subheading" ? null : "subheading"));
+                setSelectedPricingText((currentText) =>
+                  currentText === "subheading" ? null : "subheading",
+                );
                 onSelect?.(component.id);
               }}
               style={{
                 display: "inline-block",
-                border: selectedPricingText === "subheading"
-                  ? "2px solid #FF6A00"
-                  : hoveredPricingText === "subheading"
-                    ? "2px dashed #FF6A00"
-                    : "2px solid transparent",
+                border:
+                  selectedPricingText === "subheading"
+                    ? "2px solid #FF6A00"
+                    : hoveredPricingText === "subheading"
+                      ? "2px dashed #FF6A00"
+                      : "2px solid transparent",
               }}
             >
               <p
                 className="text-gray-500 focus:outline-none focus:ring-0"
                 contentEditable
                 suppressContentEditableWarning
+                onInput={(e) =>
+                  onUpdate(component.id, {
+                    pricingSubheadingText: e.currentTarget.textContent ?? "",
+                  })
+                }
                 style={{ outline: "none", boxShadow: "none", border: "none" }}
               >
-                Choose the plan that's right for you.
+                {pricingSubheadingText}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {["Starter", "Pro", "Enterprise"].map((plan, i) => {
-              const isFeaturedPlan = i === 1;
-              const isHoveredPlan = hoveredPricingPlan === plan;
-              const isSelectedPlan = selectedPricingPlan === plan;
+            {pricingPlans.map((plan) => {
+              const isFeaturedPlan = Boolean(plan.isFeatured);
+              const isHoveredPlan = hoveredPricingPlan === plan.id;
+              const isSelectedPlan = selectedPricingPlan === plan.id;
 
               return (
                 <div
-                  key={plan}
-                  onMouseEnter={() => setHoveredPricingPlan(plan)}
+                  key={plan.id}
+                  onMouseEnter={() => setHoveredPricingPlan(plan.id)}
                   onMouseLeave={() =>
                     setHoveredPricingPlan((currentPlan) =>
-                      currentPlan === plan ? null : currentPlan,
+                      currentPlan === plan.id ? null : currentPlan,
                     )
                   }
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedPricingPlan(plan);
+                    setSelectedPricingPlan(plan.id);
                     onSelect?.(component.id);
                   }}
                   className={cn(
-                    "p-8 rounded-3xl border-2 transition-all space-y-6 flex flex-col cursor-pointer",
-                    isFeaturedPlan && "shadow-2xl scale-105 relative z-10",
+                    "relative flex cursor-pointer flex-col space-y-6 rounded-3xl border-2 p-8 transition-all",
+                    isFeaturedPlan && "z-10 scale-105 shadow-2xl",
                     isSelectedPlan
                       ? "border-valasys-orange"
                       : isHoveredPlan
@@ -815,33 +1006,133 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                           : "border-gray-100",
                   )}
                 >
+                  {(isHoveredPlan || isSelectedPlan) && (
+                    <div className="absolute right-4 top-4 z-20 flex items-center gap-1 rounded-full border border-gray-200 bg-white/95 p-1 shadow-lg">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-valasys-orange/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopyPricingPlan(plan.id);
+                        }}
+                        title="Copy section"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-valasys-orange/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddPricingPlan(plan.id);
+                        }}
+                        title="Add section"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600"
+                        disabled={pricingPlans.length === 1}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePricingPlan(plan.id);
+                        }}
+                        title={
+                          pricingPlans.length === 1
+                            ? "At least one section is required"
+                            : "Delete section"
+                        }
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                   {isFeaturedPlan && (
-                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-valasys-orange text-white text-[10px] font-black rounded-full uppercase">
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-valasys-orange px-3 py-1 text-[10px] font-black uppercase text-white">
                       Most Popular
                     </span>
                   )}
                   <div>
-                    <h3 className="text-xl font-bold mb-1" contentEditable suppressContentEditableWarning>{plan}</h3>
+                    <h3
+                      className="mb-1 text-xl font-bold focus:outline-none"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onInput={(e) =>
+                        updatePricingPlan(plan.id, {
+                          name: e.currentTarget.textContent ?? "",
+                        })
+                      }
+                    >
+                      {plan.name}
+                    </h3>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black">${[19, 49, 99][i]}</span>
-                      <span className="text-gray-400 text-sm">/mo</span>
+                      <span
+                        className="text-3xl font-black focus:outline-none"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onInput={(e) =>
+                          updatePricingPlan(plan.id, {
+                            price: e.currentTarget.textContent ?? "",
+                          })
+                        }
+                      >
+                        {plan.price}
+                      </span>
+                      <span className="text-sm text-gray-400">
+                        {plan.period || "/mo"}
+                      </span>
                     </div>
                   </div>
-                  <ul className="space-y-3 flex-1">
-                    {[1, 2, 3, 4].map((j) => (
-                      <li key={j} className="flex items-center gap-3 text-sm text-gray-600">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span contentEditable suppressContentEditableWarning>{`Benefit number ${j}`}</span>
+                  <ul className="flex-1 space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li
+                        key={`${plan.id}-${featureIndex}`}
+                        className="flex items-center gap-3 text-sm text-gray-600"
+                      >
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span
+                          className="focus:outline-none"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onInput={(e) =>
+                            updatePricingFeature(
+                              plan.id,
+                              featureIndex,
+                              e.currentTarget.textContent ?? "",
+                            )
+                          }
+                        >
+                          {feature}
+                        </span>
                       </li>
                     ))}
                   </ul>
                   <Button
                     className={cn(
-                      "w-full py-6 font-bold rounded-xl",
-                      isFeaturedPlan ? "bg-valasys-orange hover:bg-valasys-orange/90" : "bg-gray-900",
+                      "w-full rounded-xl py-6 font-bold",
+                      isFeaturedPlan
+                        ? "bg-valasys-orange hover:bg-valasys-orange/90"
+                        : "bg-gray-900 hover:bg-gray-800",
                     )}
+                    onClick={(e) => e.preventDefault()}
                   >
-                    Choose {plan}
+                    <span
+                      className="focus:outline-none"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onClick={(e) => e.stopPropagation()}
+                      onInput={(e) =>
+                        updatePricingPlan(plan.id, {
+                          buttonText: e.currentTarget.textContent ?? "",
+                        })
+                      }
+                    >
+                      {plan.buttonText}
+                    </span>
                   </Button>
                 </div>
               );

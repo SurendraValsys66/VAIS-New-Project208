@@ -33,6 +33,52 @@ export const useLayout = (initialData: BuilderComponent[] = []) => {
             { id: `h-${Date.now()}-2`, type: "description" as const, text: "Powerful tools designed to help you grow your business and reach your goals faster." },
           ],
         }),
+        ...(type === "pricing" && {
+          pricingHeadingText: "Simple, transparent pricing",
+          pricingSubheadingText: "Choose the plan that's right for you.",
+          pricingPlans: [
+            {
+              id: `pricing-${Date.now()}-1`,
+              name: "Starter",
+              price: "$19",
+              period: "/mo",
+              features: [
+                "Benefit number 1",
+                "Benefit number 2",
+                "Benefit number 3",
+                "Benefit number 4",
+              ],
+              buttonText: "Choose Starter",
+            },
+            {
+              id: `pricing-${Date.now()}-2`,
+              name: "Pro",
+              price: "$49",
+              period: "/mo",
+              features: [
+                "Benefit number 1",
+                "Benefit number 2",
+                "Benefit number 3",
+                "Benefit number 4",
+              ],
+              buttonText: "Choose Pro",
+              isFeatured: true,
+            },
+            {
+              id: `pricing-${Date.now()}-3`,
+              name: "Enterprise",
+              price: "$99",
+              period: "/mo",
+              features: [
+                "Benefit number 1",
+                "Benefit number 2",
+                "Benefit number 3",
+                "Benefit number 4",
+              ],
+              buttonText: "Choose Enterprise",
+            },
+          ],
+        }),
       };
 
       // Call the onAdded callback with the new component ID

@@ -61,6 +61,16 @@ export interface FeatureGridItem {
   styles?: FeatureGridItemStyles;
 }
 
+export interface PricingPlan {
+  id: string;
+  name: string;
+  price: string;
+  period?: string;
+  features: string[];
+  buttonText: string;
+  isFeatured?: boolean;
+}
+
 export interface BuilderComponent {
   id: string;
   type: ComponentType;
@@ -157,6 +167,10 @@ export interface BuilderComponent {
   featureGridPrimaryButtonText?: string;
   featureGridSecondaryButtonText?: string;
   featureGridColumns?: number;
+  // Pricing section properties
+  pricingHeadingText?: string;
+  pricingSubheadingText?: string;
+  pricingPlans?: PricingPlan[];
 }
 
 export const DRAG_TYPES = {
