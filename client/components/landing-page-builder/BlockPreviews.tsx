@@ -2,6 +2,7 @@ import React from "react";
 import { LandingPageBlock } from "./types";
 import { getBlockStyles } from "./utils";
 import { cn } from "@/lib/utils";
+import { Copy, Plus, Trash2, Check } from "lucide-react";
 export {
   SectionBlockPreview,
   RowBlockPreview,
@@ -389,6 +390,12 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
   const [selectedTierId, setSelectedTierId] = React.useState<string | null>(null);
   const [hoveredElement, setHoveredElement] = React.useState<string | null>(null);
   const [selectedElement, setSelectedElement] = React.useState<string | null>(null);
+  const [copiedElement, setCopiedElement] = React.useState<string | null>(null);
+
+  const showCopyFeedback = (elementId: string) => {
+    setCopiedElement(elementId);
+    setTimeout(() => setCopiedElement(null), 2000);
+  };
 
   const handleTierClick = (e: React.MouseEvent, tierId: string) => {
     e.stopPropagation();
@@ -400,10 +407,10 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
     setSelectedElement(selectedElement === elementId ? null : elementId);
   };
 
-  const handleCopyElement = (e: React.MouseEvent, text: string) => {
+  const handleCopyElement = (e: React.MouseEvent, text: string, elementId: string) => {
     e.stopPropagation();
     navigator.clipboard.writeText(text);
-    alert("Text copied to clipboard!");
+    showCopyFeedback(elementId);
   };
 
   const handleDeleteElement = (e: React.MouseEvent, elementId: string) => {
@@ -422,7 +429,7 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
     e.stopPropagation();
     const tierText = `${tier.name} - ${tier.price} - ${tier.features?.join(", ")}`;
     navigator.clipboard.writeText(tierText);
-    alert("Tier copied to clipboard!");
+    showCopyFeedback(`tier-${tier.id}`);
   };
 
   const handleDeleteTier = (e: React.MouseEvent, tierId: string) => {
@@ -473,16 +480,6 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
     onUpdate({ pricingTiers: updatedTiers });
   };
 
-  const handleUpdateTierElement = (tierId: string, field: string, value: any) => {
-    const updatedTiers = props.pricingTiers?.map((tier: any) => {
-      if (tier.id === tierId) {
-        return { ...tier, [field]: value };
-      }
-      return tier;
-    }) || [];
-    onUpdate({ pricingTiers: updatedTiers });
-  };
-
   return (
     <div
       onClick={onSelect}
@@ -492,9 +489,10 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
       style={blockStyles}
     >
       <div className="px-8 py-8">
+        {/* Heading */}
         <div
           className={cn(
-            "cursor-pointer transition-all rounded p-3 mb-2 relative",
+            "cursor-pointer transition-all rounded p-4 mb-2 relative",
             selectedElement === "heading" && "bg-orange-50",
             hoveredElement === "heading" && selectedElement !== "heading" && "bg-gray-50",
           )}
@@ -516,28 +514,37 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
             {props.heading}
           </h2>
           {selectedElement === "heading" && (
-            <div className="mt-3 flex gap-2 pt-3 border-t border-gray-300">
+            <div className="mt-4 flex gap-2 pt-4 border-t border-gray-300">
               <button
-                onClick={(e) => handleCopyElement(e, props.heading)}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
-                title="Copy text"
+                onClick={(e) => handleCopyElement(e, props.heading, "heading")}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                title="Copy heading text"
               >
-                <span>📋</span> Copy
+                {copiedElement === "heading" ? (
+                  <>
+                    <Check className="w-4 h-4" /> Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" /> Copy
+                  </>
+                )}
               </button>
               <button
                 onClick={(e) => handleDeleteElement(e, "heading")}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
-                title="Delete this element"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                title="Delete heading"
               >
-                <span>🗑️</span> Delete
+                <Trash2 className="w-4 h-4" /> Delete
               </button>
             </div>
           )}
         </div>
 
+        {/* Subheading */}
         <div
           className={cn(
-            "cursor-pointer transition-all rounded p-3 mb-8 relative",
+            "cursor-pointer transition-all rounded p-4 mb-8 relative",
             selectedElement === "subheading" && "bg-orange-50",
             hoveredElement === "subheading" && selectedElement !== "subheading" && "bg-gray-50",
           )}
@@ -559,24 +566,34 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
             {props.subheading}
           </p>
           {selectedElement === "subheading" && (
-            <div className="mt-3 flex gap-2 pt-3 border-t border-gray-300">
+            <div className="mt-4 flex gap-2 pt-4 border-t border-gray-300">
               <button
-                onClick={(e) => handleCopyElement(e, props.subheading)}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
-                title="Copy text"
+                onClick={(e) => handleCopyElement(e, props.subheading, "subheading")}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                title="Copy subheading text"
               >
-                <span>📋</span> Copy
+                {copiedElement === "subheading" ? (
+                  <>
+                    <Check className="w-4 h-4" /> Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" /> Copy
+                  </>
+                )}
               </button>
               <button
                 onClick={(e) => handleDeleteElement(e, "subheading")}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
-                title="Delete this element"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                title="Delete subheading"
               >
-                <span>🗑️</span> Delete
+                <Trash2 className="w-4 h-4" /> Delete
               </button>
             </div>
           )}
         </div>
+
+        {/* Pricing Tiers Grid */}
         <div className="grid grid-cols-3 gap-8">
           {props.pricingTiers?.map((tier: any) => (
             <div
@@ -603,76 +620,64 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
               onClick={(e) => handleTierClick(e, tier.id)}
             >
               {/* Tier Name */}
-              <div
-                className="mb-2 p-2 rounded cursor-pointer border-2 border-transparent hover:border-orange-300 transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
+              <div className="mb-4 relative group">
                 <h3 className="text-lg font-semibold mb-2">{tier.name}</h3>
                 {selectedTierId === tier.id && (
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(tier.name);
+                        showCopyFeedback(`tier-name-${tier.id}`);
                       }}
-                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1 rounded text-xs transition-colors"
-                      title="Copy"
+                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors flex items-center justify-center gap-1"
+                      title="Copy tier name"
                     >
-                      📋
+                      <Copy className="w-3 h-3" /> Copy
                     </button>
                   </div>
                 )}
               </div>
 
               {/* Tier Price */}
-              <div
-                className="mb-2 p-2 rounded cursor-pointer border-2 border-transparent hover:border-orange-300 transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
+              <div className="mb-4 relative">
                 <div className="text-4xl font-bold mb-2">{tier.price}</div>
                 {selectedTierId === tier.id && (
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(tier.price);
+                        showCopyFeedback(`tier-price-${tier.id}`);
                       }}
-                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1 rounded text-xs transition-colors"
-                      title="Copy"
+                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors flex items-center justify-center gap-1"
+                      title="Copy price"
                     >
-                      📋
+                      <Copy className="w-3 h-3" /> Copy
                     </button>
                   </div>
                 )}
               </div>
 
               {/* Tier Description */}
-              <div
-                className="mb-6 p-2 rounded cursor-pointer border-2 border-transparent hover:border-orange-300 transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
+              <div className="mb-6 relative">
                 <p
                   className={`text-sm ${tier.isHighlighted ? "text-gray-300" : "text-gray-600"}`}
                 >
                   {tier.description}
                 </p>
                 {selectedTierId === tier.id && (
-                  <div className="flex gap-1 mt-2">
+                  <div className="flex gap-2 mt-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(tier.description);
+                        showCopyFeedback(`tier-desc-${tier.id}`);
                       }}
-                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1 rounded text-xs transition-colors"
-                      title="Copy"
+                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors flex items-center justify-center gap-1"
+                      title="Copy description"
                     >
-                      📋
+                      <Copy className="w-3 h-3" /> Copy
                     </button>
                   </div>
                 )}
@@ -680,12 +685,12 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
 
               {/* Features List */}
               <ul
-                className={`text-sm mb-8 space-y-2 p-2 rounded border-2 border-transparent hover:border-orange-300 transition-all ${
+                className={`text-sm mb-8 space-y-2 ${
                   tier.isHighlighted ? "text-gray-300" : "text-gray-600"
                 }`}
               >
                 {tier.features?.map((feature: string, i: number) => (
-                  <li key={i} className="flex items-center justify-between group">
+                  <li key={i} className="flex items-center justify-between group px-2 py-1 rounded hover:bg-gray-100 transition-colors">
                     <span>• {feature}</span>
                     {selectedTierId === tier.id && (
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -693,25 +698,26 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             navigator.clipboard.writeText(feature);
+                            showCopyFeedback(`feature-${tier.id}-${i}`);
                           }}
-                          className="bg-blue-400 hover:bg-blue-500 text-white py-0.5 px-1.5 rounded text-xs transition-colors"
-                          title="Copy"
+                          className="bg-blue-400 hover:bg-blue-500 text-white py-1 px-2 rounded text-xs transition-colors flex items-center gap-1"
+                          title="Copy feature"
                         >
-                          📋
+                          <Copy className="w-3 h-3" />
                         </button>
                         <button
                           onClick={(e) => handleAddFeature(e, tier.id, feature)}
-                          className="bg-green-400 hover:bg-green-500 text-white py-0.5 px-1.5 rounded text-xs transition-colors"
-                          title="Duplicate"
+                          className="bg-green-400 hover:bg-green-500 text-white py-1 px-2 rounded text-xs transition-colors flex items-center gap-1"
+                          title="Duplicate feature"
                         >
-                          ➕
+                          <Plus className="w-3 h-3" />
                         </button>
                         <button
                           onClick={(e) => handleDeleteFeature(e, tier.id, i)}
-                          className="bg-red-400 hover:bg-red-500 text-white py-0.5 px-1.5 rounded text-xs transition-colors"
-                          title="Delete"
+                          className="bg-red-400 hover:bg-red-500 text-white py-1 px-2 rounded text-xs transition-colors flex items-center gap-1"
+                          title="Delete feature"
                         >
-                          🗑️
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     )}
@@ -720,12 +726,7 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
               </ul>
 
               {/* Button Text */}
-              <div
-                className="p-2 rounded cursor-pointer border-2 border-transparent hover:border-orange-300 transition-all"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
+              <div className="relative">
                 <button
                   style={{
                     backgroundColor: tier.buttonColor,
@@ -736,16 +737,17 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
                   {tier.buttonText}
                 </button>
                 {selectedTierId === tier.id && (
-                  <div className="flex gap-1 mt-2">
+                  <div className="flex gap-2 mt-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(tier.buttonText);
+                        showCopyFeedback(`btn-${tier.id}`);
                       }}
-                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1 rounded text-xs transition-colors"
-                      title="Copy"
+                      className="flex-1 bg-blue-400 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors flex items-center justify-center gap-1"
+                      title="Copy button text"
                     >
-                      📋
+                      <Copy className="w-3 h-3" /> Copy
                     </button>
                   </div>
                 )}
@@ -756,24 +758,32 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
                 <div className="mt-4 flex gap-2 pt-4 border-t border-gray-300">
                   <button
                     onClick={(e) => handleCopyTier(e, tier)}
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
                     title="Copy entire tier"
                   >
-                    <span>📋</span> Copy Tier
+                    {copiedElement === `tier-${tier.id}` ? (
+                      <>
+                        <Check className="w-4 h-4" /> Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" /> Copy Tier
+                      </>
+                    )}
                   </button>
                   <button
                     onClick={(e) => handleAddTier(e, tier)}
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
                     title="Duplicate entire tier"
                   >
-                    <span>➕</span> Add Tier
+                    <Plus className="w-4 h-4" /> Add Tier
                   </button>
                   <button
                     onClick={(e) => handleDeleteTier(e, tier.id)}
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2"
                     title="Delete this tier"
                   >
-                    <span>🗑️</span> Delete
+                    <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
               )}
