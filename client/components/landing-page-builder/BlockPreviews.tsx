@@ -433,7 +433,7 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
                 border: selectedTierId === tier.id
                   ? "3px solid #FF6A00"
                   : hoveredTierId === tier.id
-                  ? "3px dotted #FF6A00"
+                  ? "3px dashed #FF6A00"
                   : "1px solid #e5e7eb",
               }}
               onMouseEnter={(e) => {
