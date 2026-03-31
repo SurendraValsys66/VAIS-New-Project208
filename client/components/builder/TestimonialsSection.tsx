@@ -159,6 +159,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           className="text-3xl font-bold text-center text-gray-900 cursor-text hover:bg-gray-50 p-2 rounded"
           contentEditable
           suppressContentEditableWarning
+          dir="ltr"
+          style={{ direction: "ltr" }}
           onBlur={(e) => {
             handleUpdateBlock({ heading: e.currentTarget.textContent });
           }}

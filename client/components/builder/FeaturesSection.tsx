@@ -551,6 +551,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                   }
                 }}
                 dir="ltr"
+                style={{ direction: "ltr" }}
                 className={cn(
                   "text-4xl mb-4 cursor-text p-2 rounded transition-all outline-none",
                   isSelected(feature.id)
@@ -602,6 +603,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                   }
                 }}
                 dir="ltr"
+                style={{ direction: "ltr" }}
                 className={cn(
                   "text-lg font-semibold text-gray-900 mb-2 cursor-text p-2 rounded transition-all outline-none",
                   isSelected(feature.id)
@@ -654,6 +656,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
                   }
                 }}
                 dir="ltr"
+                style={{ direction: "ltr" }}
                 className={cn(
                   "text-sm text-gray-600 cursor-text p-2 rounded transition-all outline-none",
                   isSelected(feature.id)

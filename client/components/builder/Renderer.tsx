@@ -829,6 +829,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             className="w-full focus:outline-none focus:ring-0"
             contentEditable
             suppressContentEditableWarning
+            style={{ direction: "ltr" }}
             onFocus={(e) => {
               // Clear default text when user focuses to edit
               if (e.currentTarget.textContent === "Catchy Heading" && !component.contentText) {
@@ -875,6 +876,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             className="focus:outline-none focus:ring-0"
             contentEditable
             suppressContentEditableWarning
+            style={{ direction: "ltr" }}
             onFocus={(e) => {
               // Clear default text when user focuses to edit
               if (e.currentTarget.textContent === defaultParaText && !component.contentText) {
@@ -936,6 +938,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             ref={buttonRef}
             contentEditable
             suppressContentEditableWarning
+            style={{ direction: "ltr" }}
             onFocus={(e) => {
               isFocusedRef.current = true;
               isFirstKeyPressRef.current = true;
@@ -1235,6 +1238,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                         className="text-2xl font-black focus:outline-none focus:ring-0"
                         contentEditable
                         suppressContentEditableWarning
+                        style={{ direction: "ltr" }}
                         onClick={(e) => e.stopPropagation()}
                         onFocus={() => {
                           setSelectedPricingField(null);
@@ -1256,6 +1260,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                         className="text-gray-500 focus:outline-none focus:ring-0"
                         contentEditable
                         suppressContentEditableWarning
+                        style={{ direction: "ltr" }}
                         onClick={(e) => e.stopPropagation()}
                         onFocus={() => {
                           setSelectedPricingField(null);
@@ -1397,6 +1402,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                         className="mb-1 text-xl font-bold focus:outline-none"
                         contentEditable
                         suppressContentEditableWarning
+                        style={{ direction: "ltr" }}
                         onClick={(e) => e.stopPropagation()}
                         onFocus={() => {
                           setSelectedPricingText(null);
@@ -1446,6 +1452,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                           className="text-3xl font-black focus:outline-none"
                           contentEditable
                           suppressContentEditableWarning
+                          style={{ direction: "ltr" }}
                           onClick={(e) => e.stopPropagation()}
                           onFocus={() => {
                             setSelectedPricingText(null);
@@ -1507,6 +1514,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                             className="focus:outline-none"
                             contentEditable
                             suppressContentEditableWarning
+                            style={{ direction: "ltr" }}
                             onClick={(e) => e.stopPropagation()}
                             onFocus={() => {
                               setSelectedPricingText(null);
@@ -1569,6 +1577,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
                         className="focus:outline-none"
                         contentEditable
                         suppressContentEditableWarning
+                        style={{ direction: "ltr" }}
                         onClick={(e) => e.stopPropagation()}
                         onFocus={() => {
                           setSelectedPricingText(null);
