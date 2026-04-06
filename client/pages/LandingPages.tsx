@@ -107,21 +107,24 @@ export default function LandingPages() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {pages.map((page) => (
                 <div
                   key={page.id}
-                  className="group bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden border-b-4 border-b-transparent hover:border-b-valasys-orange"
+                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border-b-4 border-b-transparent hover:border-b-valasys-orange"
                 >
-                  <div className="relative overflow-hidden flex items-center justify-center p-8 aspect-square">
-                    <div className="w-full h-full bg-white rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 text-gray-300 group-hover:scale-105 group-hover:border-valasys-orange/30 group-hover:text-valasys-orange/30 transition-all">
-                      <Layout className="w-10 h-10" />
-                      <span className="text-xs font-bold uppercase tracking-widest">No Preview Available</span>
+                  <div className="relative h-64 overflow-hidden flex items-center justify-center bg-gray-50">
+                    {/* Auto-scrolling template image */}
+                    <div className="relative w-full h-full overflow-hidden">
+                      <img
+                        src="https://cdn.builder.io/api/v1/image/assets%2Fddd1f2eefed243f880ce4c077bf467dd%2Fc791842089ab4e8a8223fa1c37011b01?format=webp&width=800&height=1200"
+                        alt="Template preview"
+                        className="w-full h-auto object-cover transition-transform duration-5000 ease-linear group-hover:translate-y-[-600px]"
+                      />
                     </div>
-                    <div className="absolute inset-0 bg-valasys-orange/0 group-hover:bg-valasys-orange/5 transition-colors pointer-events-none" />
 
                     {/* Use this template button - appears on hover */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Button onClick={handleViewTemplates} className="bg-white text-valasys-orange hover:bg-gray-100 px-8 py-3 rounded-xl font-bold shadow-lg transition-all">
                         Use this template
                       </Button>
