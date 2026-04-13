@@ -635,6 +635,17 @@ function DeliverablesDialog({
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                  onClick={() => {
+                    // Send mail functionality placeholder
+                    console.log("Send mail triggered");
+                  }}
+                >
+                  <Mail className="w-4 h-4" />
+                  Send Mail
+                </Button>
+                <Button
+                  size="sm"
                   className="bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-2"
                   onClick={() => {
                     // Export functionality placeholder
@@ -661,33 +672,60 @@ function DeliverablesDialog({
         </div>
 
         <div className="px-6 py-6 space-y-8">
-          {/* Summary KPI Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-orange-100 shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
-              <div className="p-3 bg-orange-50 rounded-full text-orange-600">
-                <Mail className="w-5 h-5" />
+          {/* Campaign Intelligence Section - Sleek & Compact */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            {/* Compact Header with Gradient Accent */}
+            <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-orange-50/30">
+              <div className="p-2 bg-orange-600 rounded-lg">
+                <Activity className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Monthly Vol.</p>
-                <p className="text-xl font-extrabold text-gray-900">{totalMonthlyCS.toLocaleString()}</p>
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
-              <div className="p-3 bg-blue-50 rounded-full text-blue-600">
-                <Briefcase className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Quarterly Vol.</p>
-                <p className="text-xl font-extrabold text-gray-900">{(totalMonthlyCS * 3).toLocaleString()}</p>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900">Campaign Intelligence</h3>
+                <p className="text-xs text-gray-500 font-medium">Metrics & AI-Powered Recommendation</p>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
-              <div className="p-3 bg-emerald-50 rounded-full text-emerald-600">
-                <Users className="w-5 h-5" />
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Compact KPI Metrics */}
+              <div className="grid grid-cols-3 gap-3">
+                {/* Monthly Volume */}
+                <div className="text-center p-4 rounded-lg bg-orange-50/50 border border-orange-100 hover:border-orange-200 transition-colors">
+                  <Mail className="w-4 h-4 text-orange-600 mx-auto mb-2" />
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Monthly</p>
+                  <p className="text-2xl font-black text-gray-900">{(totalMonthlyCS / 1000).toFixed(1)}k</p>
+                  <p className="text-[10px] text-gray-500 mt-1">deliverables</p>
+                </div>
+
+                {/* Quarterly Volume */}
+                <div className="text-center p-4 rounded-lg bg-blue-50/50 border border-blue-100 hover:border-blue-200 transition-colors">
+                  <Briefcase className="w-4 h-4 text-blue-600 mx-auto mb-2" />
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Quarterly</p>
+                  <p className="text-2xl font-black text-gray-900">{((totalMonthlyCS * 3) / 1000).toFixed(1)}k</p>
+                  <p className="text-[10px] text-gray-500 mt-1">forecast</p>
+                </div>
+
+                {/* Database Reach */}
+                <div className="text-center p-4 rounded-lg bg-emerald-50/50 border border-emerald-100 hover:border-emerald-200 transition-colors">
+                  <Users className="w-4 h-4 text-emerald-600 mx-auto mb-2" />
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Database</p>
+                  <p className="text-2xl font-black text-gray-900">{(jobLevelTotal / 1000).toFixed(1)}k</p>
+                  <p className="text-[10px] text-gray-500 mt-1">profiles</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">DB Reach</p>
-                <p className="text-xl font-extrabold text-gray-900">{jobLevelTotal.toLocaleString()}</p>
+
+              {/* Recommendation */}
+              <div className="pt-2 border-t border-gray-100">
+                <RecommendedCampaignType
+                  jobTitles={jobTitles}
+                  jobFunctions={jobFunctions}
+                  jobLevels={jobLevels}
+                  geolocations={geolocations}
+                  employeeSize={employeeSize}
+                  industries={industries}
+                  totalDeliverables={totalDeliverables}
+                  campaignAssets={selectedAssets}
+                />
               </div>
             </div>
           </div>
@@ -942,18 +980,6 @@ function DeliverablesDialog({
           </Accordion>
 
           <div className="pt-4 pb-8 space-y-8">
-            {/* Recommended Campaign Type Section */}
-            <RecommendedCampaignType
-              jobTitles={jobTitles}
-              jobFunctions={jobFunctions}
-              jobLevels={jobLevels}
-              geolocations={geolocations}
-              employeeSize={employeeSize}
-              industries={industries}
-              totalDeliverables={totalDeliverables}
-              campaignAssets={selectedAssets}
-            />
-
             {/* Campaign Actions */}
             {userHasFullPermission && (
               <div className="bg-white rounded-2xl p-6 border border-amber-200 shadow-sm bg-gradient-to-br from-white to-amber-50/30">

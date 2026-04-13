@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { BuilderCanvas } from "@/components/builder/Canvas";
 import { Button } from "@/components/ui/button";
-import { Plus, Layout, Search, Zap, Sparkles, Calendar, Trash2 } from "lucide-react";
+import { Plus, Layout, Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { DndProvider } from "react-dnd";
@@ -23,6 +23,7 @@ export default function LandingPages() {
   const navigate = useNavigate();
   const [view, setView] = useState<View>("list");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<PageData | null>(null);
   const [pages, setPages] = useState<PageData[]>([
     {
       id: "1",
@@ -51,11 +52,13 @@ export default function LandingPages() {
   ]);
 
   const handleCreateNew = () => {
+    setSelectedTemplate(null);
     setView("editor");
   };
 
-  const handleViewTemplates = () => {
-    console.log("View templates clicked");
+  const handleViewTemplates = (template: PageData) => {
+    setSelectedTemplate(template);
+    setView("editor");
   };
 
   const handleAIBuilder = () => {
@@ -70,7 +73,7 @@ export default function LandingPages() {
   if (view === "editor") {
     return (
       <DndProvider backend={HTML5Backend}>
-        <BuilderCanvas onBack={handleBack} />
+        <BuilderCanvas onBack={handleBack} template={selectedTemplate} />
       </DndProvider>
     );
   }
@@ -95,10 +98,6 @@ export default function LandingPages() {
                 <Button onClick={handleAIBuilder} className="px-6 py-6 rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-base group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
                   <Sparkles className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                   AI Builder
-                </Button>
-                <Button onClick={handleViewTemplates} variant="outline" className="px-6 py-6 rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-base group border-2 border-valasys-orange text-valasys-orange hover:bg-valasys-orange/5">
-                  <Zap className="w-5 h-5 mr-2" />
-                  View Templates
                 </Button>
                 <Button onClick={handleCreateNew} className="bg-valasys-orange hover:bg-valasys-orange/90 text-white px-6 py-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all font-bold text-base group">
                   <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
@@ -162,7 +161,7 @@ export default function LandingPages() {
 
                     {/* Use this template button - appears on hover */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Button onClick={handleViewTemplates} className="bg-white text-valasys-orange hover:bg-gray-100 px-8 py-3 rounded-xl font-bold shadow-lg transition-all">
+                      <Button onClick={() => handleViewTemplates(page)} className="bg-white text-valasys-orange hover:bg-gray-100 px-8 py-3 rounded-xl font-bold shadow-lg transition-all">
                         Use this template
                       </Button>
                     </div>

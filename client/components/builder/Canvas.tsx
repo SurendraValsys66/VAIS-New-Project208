@@ -25,6 +25,13 @@ interface BuilderCanvasProps {
   onBack?: () => void;
   templateId?: string;
   initialLayout?: BuilderComponent[];
+  template?: {
+    id: string;
+    name: string;
+    updatedAt: string;
+    thumbnail?: string;
+    templateImage?: string;
+  };
 }
 
 const DEFAULT_LAYOUT: BuilderComponent[] = [];
@@ -35,7 +42,7 @@ const PREVIEW_DEVICE_PRESETS: Record<PreviewDevice, { label: string; width: numb
   mobile: { label: "Mobile", width: 390, icon: Smartphone },
 };
 
-export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId, initialLayout }) => {
+export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId, initialLayout, template }) => {
   const [isPreviewMode, setIsPreviewMode] = React.useState(false);
   const [previewDevice, setPreviewDevice] = React.useState<PreviewDevice>("desktop");
   const [selectedComponentId, setSelectedComponentId] = React.useState<string | null>(null);
@@ -48,9 +55,11 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
 
   const layoutConfig = initialLayout
     ? initialLayout
-    : templateId
-      ? templateLayoutMap[templateId] || DEFAULT_LAYOUT
-      : DEFAULT_LAYOUT;
+    : template
+      ? templateLayoutMap[template.id] || DEFAULT_LAYOUT
+      : templateId
+        ? templateLayoutMap[templateId] || DEFAULT_LAYOUT
+        : DEFAULT_LAYOUT;
 
   const { layout, addComponent, moveComponent, updateComponent, removeComponent, duplicateComponent } = useLayout(
     layoutConfig,
@@ -233,9 +242,9 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
           <div className="flex items-center gap-4">
             <div>
               <div className="text-sm font-bold text-gray-900 tracking-tight">
-                {templateId === "online-marketing-conference"
+                {template?.name || (templateId === "online-marketing-conference"
                   ? "Online Marketing Conference"
-                  : "New Page"}
+                  : "New Page")}
               </div>
               <div className="text-xs text-gray-500">
                 {currentPreviewPreset.label}
@@ -327,9 +336,9 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({ onBack, templateId
           <div className="flex-1 max-w-md">
             <div className="text-sm text-gray-600 mb-1">Landing Page</div>
             <div className="text-lg font-semibold text-gray-900">
-              {templateId === "online-marketing-conference"
+              {template?.name || (templateId === "online-marketing-conference"
                 ? "Online Marketing Conference"
-                : "New Page"}
+                : "New Page")}
             </div>
           </div>
           <div className="flex items-center gap-2 ml-4">
