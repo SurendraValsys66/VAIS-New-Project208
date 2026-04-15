@@ -176,22 +176,33 @@ export default function LandingPages() {
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Filter by Category
-              </label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full md:w-64 py-6 rounded-2xl border-gray-200 shadow-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl">
-                  {CATEGORIES.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <h2 className="text-xl font-bold text-gray-900">Predefine Landing page Template</h2>
+              <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                <div className="flex-1 md:flex-initial md:min-w-64">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Filter by Category
+                  </label>
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="w-full py-6 rounded-2xl border-gray-200 shadow-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl">
+                      {CATEGORIES.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex items-center justify-center md:justify-start gap-4">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-900">{filteredPages.length}</div>
+                    <div className="text-[10px] uppercase font-bold text-gray-400">Templates</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
